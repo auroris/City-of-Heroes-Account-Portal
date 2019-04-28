@@ -11,8 +11,8 @@ Install the Microsoft PHP drivers for SQL Server (https://www.microsoft.com/en-u
 Modify your C:\xampp\php.ini, add the following lines to your Dynamic Extensions section. XAMPP PHP is version 7.3, thread-safe.
 Example:
 
-  extension=php_sqlsrv_73_ts_x64
-  extension=php_pdo_sqlsrv_73_ts_x64
+> extension=php_sqlsrv_73_ts_x64
+> extension=php_pdo_sqlsrv_73_ts_x64
 
 I strongly recommend you customize index.php; you don't want your players creating an account on your server and trying to log into mine!
 
