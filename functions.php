@@ -19,7 +19,7 @@ function OpenConnection()
     {
         $serverName = "localhost\sqlexpress";  
         $connectionOptions = array("Database"=>"cohauth",  
-            "Uid"=>"CoHDB", "PWD"=>"bqaDDMA7QUKNABYdKQrj");  
+            "Uid"=>"dbusername", "PWD"=>"dbpassword");  
         $conn = sqlsrv_connect($serverName, $connectionOptions);
         if($conn == false)  
             die("<pre>" . print_r(sqlsrv_errors(), true) . "</pre>");
