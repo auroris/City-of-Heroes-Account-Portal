@@ -6,4 +6,4 @@ Run this command from the root directory
 
 # Running the application
 
-Drag and drop into a subfolder of xampp's htdocs or whatever.
+Drag and drop into a subfolder of xampp's htdocs or whatever. You will want to navigate to the .\public\index.php file in your web browser.
