@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{% block title %}{% endblock %}</title>
+    <link href="style.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div id="logo"><img src="coh_logo.png"></div>
+<div id="content">
+
+    <table>
+        <tr>
+            <td valign="top">
+                <div class="nav">
+                    {{ include('template-menu.phtml') }}
+                </div>
+            </td>
+            <td valign="top">
+                {% block content %}{% endblock %}
+            </td>
+        </tr>
+    </table>
+</div>
+
+</body>
+</html>

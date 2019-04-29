@@ -1,0 +1,28 @@
+{% extends "template-base.phtml" %}
+
+{% block title %}Account Portal{% endblock %}
+
+{% block content %}
+<div class="block">
+    <div class="blocktitle">
+        About this server
+    </div>
+    <div class="blockbody">
+        <p>This City of Heroes private server was created for friends to play together in a fun atmosphere.</p>
+        <p>There are {{accounts}} accounts registered accounts holding {{characters}} characters.</p>
+    </div>
+</div>
+
+{{ include('block-create-form.phtml') }}
+
+{{ include('block-client-download.phtml') }}
+
+<div class="block">
+    <div class="blocktitle">
+        Discord and Support
+    </div>
+    <div class="blockbody">
+        <p><a href="https://discord.gg/UyBcpxa">Join the community on Discord.</a></p>
+    </div>
+</div>
+{% endblock %}

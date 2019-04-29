@@ -1,21 +1,27 @@
-# Account Portal
+# Slim Framework 3 Skeleton Application
 
-A PHP application to allow users to create their own accounts and change their passwords. It's the source code for my implementation on my private server https://coh.westus2.cloudapp.azure.com/
+Use this skeleton application to quickly setup and start working on a new Slim Framework 3 application. This application uses the latest Slim 3 with the PHP-View template renderer. It also uses the Monolog logger.
 
-# Instructions
+This skeleton application was built for Composer. This makes setting up a new Slim Framework application quick and easy.
 
-Install XAMPP for Windows (https://www.apachefriends.org/index.html). You only need the Apache module, unless you're doing other stuff with your server too. 
+## Install the Application
 
-Install the Microsoft PHP drivers for SQL Server (https://www.microsoft.com/en-us/download/details.aspx?id=57916). If you installed XAMPP into the default location, then the place you want to unpack the PHP drivers is C:\xampp\php\ext
+Run this command from the directory in which you want to install your new Slim Framework application.
 
-Modify your C:\xampp\php.ini, add the following lines to your Dynamic Extensions section. XAMPP PHP is version 7.3, thread-safe.
-Example:
-```
-extension=php_sqlsrv_73_ts_x64
-extension=php_pdo_sqlsrv_73_ts_x64
-```
-I strongly recommend you customize index.php; you don't want your players creating an account on your server and trying to log into mine!
+    php composer.phar create-project slim/slim-skeleton [my-app-name]
 
-I also recommend you set up HTTPS on your Apache server. I used Win-Acme (https://github.com/PKISharp/win-acme). The instructions for Apache is https://github.com/PKISharp/win-acme/wiki/Apache-2.4-basic-usage.
+Replace `[my-app-name]` with the desired directory name for your new application. You'll want to:
 
-Have fun :)
+* Point your virtual host document root to your new application's `public/` directory.
+* Ensure `logs/` is web writeable.
+
+To run the application in development, you can run these commands 
+
+	cd [my-app-name]
+	php composer.phar start
+
+Run this command in the application directory to run the test suite
+
+	php composer.phar test
+
+That's it! Now go build something cool.
