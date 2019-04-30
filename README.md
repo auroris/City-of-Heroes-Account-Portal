@@ -4,7 +4,7 @@ A PHP application to allow users to create their own accounts and change their p
 
 # Instructions
 
-Install XAMPP for Windows (https://www.apachefriends.org/index.html). You only need the Apache module, unless you're doing other stuff with your server too. 
+Install XAMPP for Windows (https://www.apachefriends.org/index.html - version 7.3.4 / PHP 7.3.4 64-bit). You only need the Apache module, unless you're doing other stuff with your server too. 
 
 Install the Microsoft PHP drivers for SQL Server (https://www.microsoft.com/en-us/download/details.aspx?id=57916). If you installed XAMPP into the default location, then the place you want to unpack the PHP drivers is C:\xampp\php\ext
 
