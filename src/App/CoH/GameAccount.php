@@ -32,8 +32,8 @@ class GameAccount {
         }
         
         // Check username uniqueness
-        $qCheckAccountUniqueness = sqlsrv_query($conn, "SELECT count(*) FROM cohauth.dbo.user_account WHERE UPPER(account) = UPPER(?)", array($username));
-        if (sqlsrv_fetch($qCheckAccountUniqueness) === false) {
+        $qCheckAccountUniqueness = sqlsrv_query($conn, "SELECT 1 FROM cohauth.dbo.user_account WHERE UPPER(account) = UPPER(?)", array($username));
+        if (sqlsrv_fetch($qCheckAccountUniqueness) === true) {
             return ['success' => false, 'message' => 'The account name you entered has already been taken.'];
         }
 
@@ -112,7 +112,7 @@ class GameAccount {
         
         // Verify that the username and password match an account in the database
         $found = sqlsrv_query($conn, "SELECT 1 FROM cohauth.dbo.user_auth WHERE UPPER(account) = UPPER(?) AND convert(varchar, password) = SUBSTRING(?, 1, 30)", array($username, $hash));
-        if (sqlsrv_fetch($found) === false)
+        if (sqlsrv_fetch($found) === null)
         {
             $ipaddress = '';
             if (getenv('HTTP_CLIENT_IP')) { $ipaddress = getenv('HTTP_CLIENT_IP'); }
