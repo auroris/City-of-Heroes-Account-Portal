@@ -1,5 +1,7 @@
 <?php
-class CsrfExtension extends \Twig_Extension implements Twig_Extension_GlobalsInterface
+namespace App\TwigExtension;
+
+class CsrfExtension extends \Twig_Extension implements \Twig_Extension_GlobalsInterface
 {
 
     /**

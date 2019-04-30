@@ -22,7 +22,7 @@ return function (App $app) {
         $router = $c->get('router');
         $uri = \Slim\Http\Uri::createFromEnvironment(new \Slim\Http\Environment($_SERVER));
         $view->addExtension(new \Slim\Views\TwigExtension($router, $uri));
-        $view->addExtension(new CsrfExtension($c->get('csrf')));
+        $view->addExtension(new \App\TwigExtension\CsrfExtension($c->get('csrf')));
         
         return $view;
     };
