@@ -1,11 +1,13 @@
 <?php
 namespace App\CoH;
 
+use \Exception;
+
 class DataSanitization {
     
     public static function validateUsername($username)
     {
-        if (ctype_alnum($username))
+        if (!ctype_alnum($username))
         {
             throw new Exception('Username must consist of letters and numbers only; no spaces or symbols.');
         }

@@ -4,4 +4,8 @@
 
 {% block content %}
     {{ include('block-login-form.phtml') }}
+    
+    {% if message %}
+        {{ include('block-generic.phtml') }}
+    {% endif %}
 {% endblock %}

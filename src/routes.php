@@ -42,6 +42,7 @@ return function (App $app) {
     
     $app->post('/login', function (Request $request, Response $response, array $args) use ($container) {
         $gameAccount = new GameAccount();
+
         $result = $gameAccount->Login($_POST["username"], $_POST["password"], $container->get('logger'));
         
         if ($result['success'] == true) {
@@ -49,20 +50,20 @@ return function (App $app) {
             return $response->withRedirect('./manage'); 
         }
         else {
-            return $container->get('renderer')->render($response, 'page-login.phtml', ['message' => $result['message']]);
+            return $container->get('renderer')->render($response, 'page-login.phtml', ['title' => 'Login Failure', 'message' => $result['message']]);
         }
     });
     
     $app->get('/manage', function (Request $request, Response $response, array $args) use ($container) {
         if (!isset($_SESSION["account"])) { return $container->get('renderer')->render($response, 'page-generic-message.phtml', ['title' => 'Error', 'message' => "You must be logged in to do that."]); }
-        return $container->get('renderer')->render($response, 'page-manage.phtml', ['username' => $_SESSION["account"]->GetUsername(), 'characters' => $_SESSION["account"]->GetCharacterList()]);
+        return $container->get('renderer')->render($response, 'page-manage.phtml', ['username' => $_SESSION["account"]->GetUsername(), 'characters' => $_SESSION["account"]->GetCharacterList($container->get('logger'))]);
     });
     
     $app->post('/changepassword', function (Request $request, Response $response, array $args) use ($container) {
         if (!isset($_SESSION["account"])) { return $container->get('renderer')->render($response, 'page-generic-message.phtml', ['title' => 'Error', 'message' => "You must be logged in to do that."]); }
         
-        $result = $_SESSION["account"]->ChangePassword($_POST["password"]);
-        return $container->get('renderer')->render($response, 'page-generic-message.phtml', ['title' => $result['success'] ? "Successfully Changed Password" : "Error", $result['message']]);
+        $result = $_SESSION["account"]->ChangePassword($_POST["password"], $container->get('logger'));
+        return $container->get('renderer')->render($response, 'page-generic-message.phtml', ['title' => $result['success'] === true ? "Successfully Changed Password" : "Error", 'message' => $result['message']]);
     });
     
     $app->get('/logout', function (Request $request, Response $response, array $args) use ($container) {

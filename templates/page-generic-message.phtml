@@ -3,12 +3,5 @@
 {% block title %}{{title}}{% endblock %}
 
 {% block content %}
-    <div class="block">
-        <div class="blocktitle">
-            {{title}}
-        </div>
-        <div class="blockbody">
-            {{message}}
-        </div>
-    </div>
+{{ include('block-generic.phtml') }}
 {% endblock %}

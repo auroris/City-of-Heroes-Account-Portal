@@ -2,11 +2,12 @@
 namespace App\CoH;
 
 use App\CoH\SqlServer;
+use Exception;
 
 class GameAccount {
     private $username;
 
-    function __construct($username) {
+    function __construct($username = "") {
         $this->username = $username;
     }
 
@@ -19,7 +20,7 @@ class GameAccount {
             DataSanitization::validateUsername($username);
         }
         catch (Exception $e) {
-            return ['success' => false, 'message' => e];
+            return ['success' => false, 'message' => $e->getMessage()];
         }
 
         // Validate password
@@ -27,7 +28,7 @@ class GameAccount {
             DataSanitization::validatePassword($password);
         }
         catch (Exception $e) {
-            return ['success' => false, 'message' => e];
+            return ['success' => false, 'message' => $e->getMessage()];
         }
         
         // Check username uniqueness
@@ -40,7 +41,7 @@ class GameAccount {
         $qNewAccountUID = sqlsrv_query($conn, "SELECT max(uid) FROM dbo.user_account");
         sqlsrv_fetch($qNewAccountUID);
         $uid = sqlsrv_get_field($qNewAccountUID, 0) + 1;
-        $hash = GamePassword::gameBinPassword($username, $password);
+        $hash = GamePassword::BinPassword($username, $password);
 
         // SQL statements to execute
         $sql1 = "INSERT INTO cohauth.dbo.user_account (account, uid, forum_id, pay_stat) VALUES (?, ?, ?, 1014)";
@@ -95,7 +96,7 @@ class GameAccount {
             DataSanitization::validateUsername($username);
         }
         catch (Exception $e) {
-            return ['success' => false, 'message' => e];
+            return ['success' => false, 'message' => $e->getMessage()];
         }
 
         // Validate password
@@ -103,11 +104,11 @@ class GameAccount {
             DataSanitization::validatePassword($password);
         }
         catch (Exception $e) {
-            return ['success' => false, 'message' => e];
+            return ['success' => false, 'message' => $e->getMessage()];
         }
 
         // Convert password to game format
-        $hash = GamePassword::gameBinPassword($username, $password);
+        $hash = GamePassword::BinPassword($username, $password);
         
         // Verify that the username and password match an account in the database
         $found = sqlsrv_query($conn, "SELECT 1 FROM cohauth.dbo.user_auth WHERE UPPER(account) = UPPER(?) AND convert(varchar, password) = SUBSTRING(?, 1, 30)", array($username, $hash));
@@ -139,19 +140,21 @@ class GameAccount {
             DataSanitization::validatePassword($newPassword);
         }
         catch (Exception $e) {
-            return ['success' => false, 'message' => e];
+            return ['success' => false, 'message' => $e->getMessage()];
         }
 
         // Convert password to game format
-        $hash = GamePassword::gameBinPassword($this->username, $newPassword);
+        $hash = GamePassword::BinPassword($this->username, $newPassword);
 
         sqlsrv_query($conn, "UPDATE dbo.user_auth SET password = CONVERT(BINARY(128),?) WHERE UPPER(account) = UPPER(?)", array($hash, $this->username));
         
         return ['success' => true, 'message' => "Your password has been changed successfully."];
     }
 
-    function GetCharacterList()
+    function GetCharacterList(\Monolog\Logger $logger)
     {
+        $conn = SqlServer::getInstance()->getConnection();
+
         $qCharacters = sqlsrv_query($conn, "select * FROM cohdb.dbo.ents WHERE authname = ?", array($this->username));
         $characters = array();
         while($row = sqlsrv_fetch_array($qCharacters, SQLSRV_FETCH_ASSOC)) {
