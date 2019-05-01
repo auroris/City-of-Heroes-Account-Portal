@@ -33,8 +33,9 @@ class GameData {
         exec('tasklist /FI "IMAGENAME EQ CHATSERVER.EXE" /FO CSV /V', $results);
 
         if (isset($results[1])) {
-            if isset(explode(' ', $results[1])[10]) {
-                return explode(' ', $results[1])[10];
+            $titleBarData = explode(' ', $results[1]);
+            if isset($titleBarData[10]) {
+                return $titleBarData[10];
             }
             else {
                 return '0';
