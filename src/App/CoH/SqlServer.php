@@ -7,16 +7,24 @@ class SqlServer {
 
     private function __construct()
     {
+        $config["db"] =
+        [
+            'Server' => 'localhost\sqlexpress',
+            'Database' => 'cohauth', 
+            'Username'=>'CoHDB', 
+            'Password'=>'bqaDDMA7QUKNABYdKQrj'
+        ];
+
         try
         {
-            $serverName = "localhost\sqlexpress";  
-            $connectionOptions = array("Database"=>"cohauth",  
-                "Uid"=>"CoHDB", "PWD"=>"bqaDDMA7QUKNABYdKQrj");  
-            $this->conn = sqlsrv_connect($serverName, $connectionOptions);
+            $this->conn = sqlsrv_connect($config['db']['Server'], array(
+                "Database"=> $config['db']['Database'],  
+                "Uid"=> $config['db']['Username'], 
+                "PWD"=> $config['db']['Password']));
             if($this->conn == false)  
                 die("<pre>" . print_r(sqlsrv_errors(), true) . "</pre>");
         }
-        catch(Exception $e)  
+        catch(Exception $e)
         {  
             die(print_r($e));
         }

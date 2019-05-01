@@ -2,8 +2,7 @@
 namespace App\CoH;
 
 class GameData {
-    public static function CountAccounts()
-    {
+    public static function countAccounts() {
         try {
             $conn = SqlServer::getInstance()->getConnection();
             $qTotalAccounts = sqlsrv_query($conn, "SELECT count(*) FROM dbo.user_account");
@@ -16,8 +15,7 @@ class GameData {
         }
     }
 
-    public static function CountCharacters()
-    {
+    public static function countCharacters() {
         try {
             $conn = SqlServer::getInstance()->getConnection();
             $qTotalChars = sqlsrv_query($conn, "SELECT count(*) FROM cohdb.dbo.ents");
@@ -30,8 +28,7 @@ class GameData {
         }
     }
 
-    public static function CountOnline()
-    {
+    public static function countOnline() {
         $results = array();
         exec('tasklist /FI "IMAGENAME EQ CHATSERVER.EXE" /FO CSV /V', $results);
 
@@ -40,6 +37,22 @@ class GameData {
         }
 
         return -1;
+    }
+
+    public static function getCharacter($name, $container) {
+        $conn = SqlServer::getInstance()->getConnection();
+        $qCharacterUID = sqlsrv_query($conn, "SELECT ContainerId FROM cohdb.dbo.ents WHERE name = ?", array($name));
+        if (sqlsrv_fetch($qCharacterUID) === true) {
+            sqlsrv_get_field($qCharacterUID, 0);
+
+            $results = array();
+            exec($container->get('settings')['dbquery'] . ' -getcharacter ' . escapeshellarg($name), $results);
+
+            return $results;
+        }
+        else {
+            return null;
+        }
     }
 }
 

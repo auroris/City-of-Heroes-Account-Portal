@@ -19,7 +19,7 @@ class GamePassword {
     }
 
     /* Generate password hash */
-    static function HashPassword($authname, $password)
+    static function hashPassword($authname, $password)
     {
         $authname = strtolower($authname);
         $a32 = GamePassword::adler32($authname);
@@ -29,7 +29,7 @@ class GamePassword {
         return $digest;
     }
 
-    static function BinPassword($authname, $password) {
+    static function binPassword($authname, $password) {
         return bin2hex(GamePassword::HashPassword($authname, $password)); 
     }
 }

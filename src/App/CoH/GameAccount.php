@@ -11,7 +11,7 @@ class GameAccount {
         $this->username = $username;
     }
 
-    public function Create($username, $password, \Monolog\Logger $logger)
+    public function create($username, $password, \Monolog\Logger $logger)
     {
         $conn = SqlServer::getInstance()->getConnection();
 
@@ -38,10 +38,10 @@ class GameAccount {
         }
 
         // Generate a new account ID and password hash
-        $qNewAccountUID = sqlsrv_query($conn, "SELECT max(uid) FROM dbo.user_account");
+        $qNewAccountUID = sqlsrv_query($conn, "SELECT max(uid) FROM cohauth.dbo.user_account");
         sqlsrv_fetch($qNewAccountUID);
         $uid = sqlsrv_get_field($qNewAccountUID, 0) + 1;
-        $hash = GamePassword::BinPassword($username, $password);
+        $hash = GamePassword::binPassword($username, $password);
 
         // SQL statements to execute
         $sql1 = "INSERT INTO cohauth.dbo.user_account (account, uid, forum_id, pay_stat) VALUES (?, ?, ?, 1014)";
@@ -87,7 +87,7 @@ class GameAccount {
         return ['success' => true, 'username' => $username, 'uid' => $uid, 'message' => "Account created successfully! You may log in immediately."];
     }
 
-    function Login($username, $password, \Monolog\Logger $logger)
+    function login($username, $password, \Monolog\Logger $logger)
     {
         $conn = SqlServer::getInstance()->getConnection();
         
@@ -108,7 +108,7 @@ class GameAccount {
         }
 
         // Convert password to game format
-        $hash = GamePassword::BinPassword($username, $password);
+        $hash = GamePassword::binPassword($username, $password);
         
         // Verify that the username and password match an account in the database
         $found = sqlsrv_query($conn, "SELECT 1 FROM cohauth.dbo.user_auth WHERE UPPER(account) = UPPER(?) AND convert(varchar, password) = SUBSTRING(?, 1, 30)", array($username, $hash));
@@ -131,7 +131,7 @@ class GameAccount {
         return ['success' => true, 'username' => $username];
     }
     
-    function ChangePassword($newPassword, \Monolog\Logger $logger)
+    function changePassword($newPassword, \Monolog\Logger $logger)
     {
         $conn = SqlServer::getInstance()->getConnection();
         
@@ -144,14 +144,14 @@ class GameAccount {
         }
 
         // Convert password to game format
-        $hash = GamePassword::BinPassword($this->username, $newPassword);
+        $hash = GamePassword::binPassword($this->username, $newPassword);
 
         sqlsrv_query($conn, "UPDATE dbo.user_auth SET password = CONVERT(BINARY(128),?) WHERE UPPER(account) = UPPER(?)", array($hash, $this->username));
         
         return ['success' => true, 'message' => "Your password has been changed successfully."];
     }
 
-    function GetCharacterList(\Monolog\Logger $logger)
+    function getCharacterList(\Monolog\Logger $logger)
     {
         $conn = SqlServer::getInstance()->getConnection();
 
@@ -164,7 +164,7 @@ class GameAccount {
         return $characters;
     }
 
-    function GetUsername()
+    function getUsername()
     {
         return $this->username;
     }

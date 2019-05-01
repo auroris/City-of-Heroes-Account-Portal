@@ -12,9 +12,9 @@ return function (App $app) {
     $app->get('/', function (Request $request, Response $response, array $args) use ($container) {
         // Render index view
         return $container->get('renderer')->render($response, 'page-index.phtml', [
-            'accounts' => GameData::CountAccounts(),
-            'characters' => GameData::CountCharacters(),
-            'online' => GameData::CountOnline()
+            'accounts' => GameData::countAccounts(),
+            'characters' => GameData::countCharacters(),
+            'online' => GameData::countOnline()
         ]);
     });
     
@@ -24,7 +24,7 @@ return function (App $app) {
     
     $app->post('/create', function (Request $request, Response $response, array $args) use ($container) {
         $gameAccount = new GameAccount();
-        $result = $gameAccount->Create($_POST["username"], $_POST["password"], $container->get('logger'));
+        $result = $gameAccount->create($_POST["username"], $_POST["password"], $container->get('logger'));
         
         if ($result['success'] == true) {
             $_SESSION["account"] = $gameAccount;
@@ -43,7 +43,7 @@ return function (App $app) {
     $app->post('/login', function (Request $request, Response $response, array $args) use ($container) {
         $gameAccount = new GameAccount();
 
-        $result = $gameAccount->Login($_POST["username"], $_POST["password"], $container->get('logger'));
+        $result = $gameAccount->login($_POST["username"], $_POST["password"], $container->get('logger'));
         
         if ($result['success'] == true) {
             $_SESSION["account"] = $gameAccount;
@@ -70,5 +70,10 @@ return function (App $app) {
         session_unset();
         session_destroy();
         return $response->withRedirect('./');
+    });
+
+    $app->get('/character/{name}', function (Request $request, Response $response, array $args) use ($container) {
+        $newResponse = $response->withHeader('Content-type', 'text/plain');
+        return $newResponse->write(implode("\n", GameData::getCharacter($args['name'], $container)));
     });
 };
