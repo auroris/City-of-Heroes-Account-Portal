@@ -29,20 +29,16 @@ class GameData {
     }
 
     public static function countOnline() {
-        $results = array();
-        exec('tasklist /FI "IMAGENAME EQ CHATSERVER.EXE" /FO CSV /V', $results);
-
-        if (isset($results[1])) {
-            $titleBarData = explode(' ', $results[1]);
-            if isset($titleBarData[10]) {
-                return $titleBarData[10];
-            }
-            else {
-                return '0';
-            }
+        try { 
+            $conn = SqlServer::getInstance()->getConnection(); 
+            $qOnline = sqlsrv_query($conn, "SELECT count(*) FROM cohdb.dbo.ents WHERE Active > 0"); 
+            sqlsrv_fetch($qOnline); 
+            
+            return sqlsrv_get_field($qOnline, 0); 
+        } 
+        catch (Exception $e) { 
+            return -1; 
         }
-
-        return -1;
     }
 
     public static function getCharacter($name, $container) {
