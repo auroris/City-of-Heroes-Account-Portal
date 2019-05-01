@@ -51,7 +51,7 @@ class GameData {
             return $results;
         }
         else {
-            return null;
+            return ['no such character'];
         }
     }
 }
