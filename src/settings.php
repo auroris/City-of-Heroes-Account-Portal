@@ -12,7 +12,7 @@ $GLOBALS["db"] =
 // Path to DBQuery
 $GLOBALS["dbquery"] = "C:\\Issue25Server\\bin\\dbquery.exe";
 
-$GLOBALS["features] = [
+$GLOBALS["features"] = [
     "NoDuplicateIPs" => false,     // true to disallow multiple account registration from the same IP
     "AllowNonFederatedPulls" => true // Allows users to pull characters from here to other servers that we haven't federated with
 ];
