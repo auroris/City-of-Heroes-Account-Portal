@@ -13,7 +13,7 @@ A PHP application to allow users to create their own accounts and change their p
 
 * Install the [Microsoft PHP drivers for SQL Server](https://www.microsoft.com/en-us/download/details.aspx?id=57916). If you installed XAMPP into the default location, the path you want to give the installer is `C:\xampp\php\ext`.
 
-* Modify your PHP.ini file, found at c:\xampp\php.ini and add the following lines to your Dynamic Extensions seciton.
+* Modify your `c:\xampp\php.ini` file and add the following lines to your Dynamic Extensions section.
 ```
 extension=php_sqlsrv_73_ts_x64
 extension=php_pdo_sqlsrv_73_ts_x64
