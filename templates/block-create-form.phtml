@@ -1,0 +1,25 @@
+<div class="block">
+    <div class="blocktitle">
+        CREATE YOUR ACCOUNT
+    </div>
+    <div class="blockbody">
+        <form method="post" action="create">
+            <table width="100%">
+                <tr>
+                    <td align="right"><label for="username">Your Username</label><br /><small>(maximum 14 characters; only letters and numbers)</small></td>
+                    <td><input type="text" name="username" maxlength=14></td>
+                </tr><tr>
+                    <td align="right"><label for="password">Your Password</label><br /><small>(8 to 16 characters)</small></td>
+                    <td><input type="password" name="password" maxlength=16></td>
+                </tr><tr>
+                <tr>
+                    <td colspan="2" align="right">
+                        <input type="submit" name="create" value="Create Your Account">
+                    </td>
+                </tr>
+            </table>
+            <input type="hidden" name="{{csrf.keys.name}}" value="{{csrf.name}}">
+            <input type="hidden" name="{{csrf.keys.value}}" value="{{csrf.value}}">
+        </form>
+    </div>
+</div>

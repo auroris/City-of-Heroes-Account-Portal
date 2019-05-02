@@ -1,0 +1,62 @@
+{% extends "template-base.phtml" %}
+
+{% block title %}Account Portal{% endblock %}
+
+{% block content %}
+<div class="block">
+    <div class="blocktitle">
+        Welcome {{username}}
+    </div>
+    <div class="blockbody">
+        If you would like to change your password, enter a new password below, then click "Change Password".
+        <form method="post" action="changepassword">
+            <table width="100%">
+                <tr>
+                    <td align="right"><label for="password">New Password</label></td>
+                    <td><input type="password" name="password" maxlength=16></td>
+                </tr><tr>
+                <tr>
+                    <td colspan="2" align="right">
+                        <input type="submit" name="change" value="Change Password">
+                    </td>
+                </tr>
+            </table>
+            <input type="hidden" name="{{csrf.keys.name}}" value="{{csrf.name}}">
+            <input type="hidden" name="{{csrf.keys.value}}" value="{{csrf.value}}">
+        </form>
+    </div>
+</div>
+
+<div class="block">
+    <div class="blocktitle">
+        Your Characters
+    </div>
+    <div class="blockbody">
+        <ul>
+            {% for character in characters %}
+                <li><a href="./character?id={{character.datauri}}">{{character.Name}}</a></li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+
+<div class="block">
+    <div class="blocktitle">
+        Character Import
+    </div>
+    <div class="blockbody">
+        Please select a server to transfer a character from:
+        <form method="post" action="redirect">
+            <label for="url">Server </label>
+            <select name="url">
+                {% for server in federation %}
+                    <option value="{{server.Url}}/federation?server={{host}}">{{server.Name}}</option>
+                {% endfor %}
+            </select>
+            <input type="submit" name="select" value="Choose this server"/>
+            <input type="hidden" name="{{csrf.keys.name}}" value="{{csrf.name}}">
+            <input type="hidden" name="{{csrf.keys.value}}" value="{{csrf.value}}">
+        </form>
+    </div>
+</div>
+{% endblock %}

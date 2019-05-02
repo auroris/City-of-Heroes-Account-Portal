@@ -1,0 +1,16 @@
+{% extends "template-base.phtml" %}
+
+{% block title %}Account created!{% endblock %}
+
+{% block content %}
+    <div class="block">
+        <div class="blocktitle">
+            Account Created!
+        </div>
+        <div class="blockbody">
+            Account created successfully! You may log in immediately.
+        </div>
+    </div>
+
+    {{ include('block-client-download.phtml') }}
+{% endblock %}
