@@ -24,49 +24,43 @@ return function (App $app) {
     });
     
     $app->post('/create', function (Request $request, Response $response, array $args) use ($container) {
-        $gameAccount = new GameAccount();
-        $result = $gameAccount->create($_POST["username"], $_POST["password"], $container->get('logger'));
-        
-        if ($result['success'] == true) {
+        try {
+            $gameAccount = new GameAccount();
+            $gameAccount->create($_POST["username"], $_POST["password"], $container->get('logger'));
             $_SESSION["account"] = $gameAccount;
-            return $container->get('renderer')->render($response, 'page-create-account-success.phtml', ['message' => $result['message']]);
+            return $container->get('renderer')->render($response, 'page-create-account-success.phtml');
         }
-        else {
-            return $container->get('renderer')->render($response, 'page-create-account-error.phtml', ['message' => $result['message']]);
+        catch (Exception $e) {
+            return $container->get('renderer')->render($response, 'page-create-account-error.phtml', ['message' => $e->getMessage()]);
         }
     });
     
     /********** Login Logic */
     $app->get('/login', function (Request $request, Response $response, array $args) use ($container) {
-        $nextpage = "manage";
-        if (isset($_SESSION['nextpage'])) { $nextpage = $_SESSION['nextpage']; }
-        if (isset($_SESSION["account"])) { return $response->withRedirect($nextpage); }
+        if (isset($_SESSION["account"])) { return $response->withRedirect($_SESSION['nextpage']); }
         return $container->get('renderer')->render($response, 'page-login.phtml', ['nextpage' => 'login']);
     });
     
     $app->post('/login', function (Request $request, Response $response, array $args) use ($container) {
-        $nextpage = "manage";
-        if (isset($_SESSION['nextpage'])) { $nextpage = $_SESSION['nextpage']; }
-        if (isset($_SESSION["account"])) { return $response->withRedirect($nextpage); }
+        if (isset($_SESSION["account"])) { return $response->withRedirect($_SESSION['nextpage']); }
 
-        $gameAccount = new GameAccount();
-        $result = $gameAccount->login($_POST["username"], $_POST["password"], $container->get('logger'));
-        
-        if ($result['success'] == true) {
+        try
+        {
+            $gameAccount = new GameAccount();
+            $gameAccount->login($_POST["username"], $_POST["password"], $container->get('logger'));
             $_SESSION["account"] = $gameAccount;
-            return $response->withRedirect($nextpage); 
+            return $response->withRedirect($_SESSION['nextpage']);
         }
-        else {
+        catch (Exception $e) {
             return $container->get('renderer')->render($response, 'page-login.phtml', [
                 'title' => 'Login Failure', 
-                'message' => $result['message'], 
-                'nextpage' => $_POST['nextpage']
+                'message' => $e->getMessage()
             ]);
         }
     });
     
     $app->get('/manage', function (Request $request, Response $response, array $args) use ($container) {
-        if (!isset($_SESSION["account"])) { return $container->get('renderer')->render($response, 'page-generic-message.phtml', ['title' => 'Error', 'message' => "You must be logged in to do that."]); }
+        if (!isset($_SESSION["account"])) { $_SESSION['nextpage'] = 'manage'; return $response->withRedirect('login'); }
         return $container->get('renderer')->render($response, 'page-manage.phtml', 
             ['username' => $_SESSION["account"]->GetUsername(), 
             'characters' => $_SESSION["account"]->GetCharacterList($container->get('logger')),
@@ -76,7 +70,7 @@ return function (App $app) {
     });
 
     $app->post('/changepassword', function (Request $request, Response $response, array $args) use ($container) {
-        if (!isset($_SESSION["account"])) { return $container->get('renderer')->render($response, 'page-generic-message.phtml', ['title' => 'Error', 'message' => "You must be logged in to do that."]); }
+        if (!isset($_SESSION["account"])) { $_SESSION['nextpage'] = 'manage'; return $response->withRedirect('login'); }
         
         $result = $_SESSION["account"]->ChangePassword($_POST["password"], $container->get('logger'));
         return $container->get('renderer')->render($response, 'page-generic-message.phtml', ['title' => $result['success'] === true ? "Successfully Changed Password" : "Error", 'message' => $result['message']]);
@@ -103,13 +97,12 @@ return function (App $app) {
         // If they are already logged in, send them to the select characters form. If not, ask them to login.
         $_SESSION['federation'] = new Federation($_GET["server"]);
 
-        if (isset($_SESSION["account"])) { return $response->withRedirect('federation-select-character'); }
-        $_SESSION['nextpage'] = 'federation-select-character';
-        return $response->withRedirect('login');
+        if (!isset($_SESSION["account"])) { $_SESSION['nextpage'] = 'federation'; return $response->withRedirect('login'); }
+        return $response->withRedirect('federation-select-character');
     });
 
     $app->get('/federation-select-character', function (Request $request, Response $response, array $args) use ($container) {
-        if (!isset($_SESSION["account"])) { return $container->get('renderer')->render($response, 'page-generic-message.phtml', ['title' => 'Error', 'message' => "You must be logged in to do that."]); }
+        if (!isset($_SESSION["account"])) { $_SESSION['nextpage'] = 'federation-select-character'; return $response->withRedirect('login'); }
         $federation = $_SESSION["federation"];
         //unset($_SESSION["federation"]);
         unset($_SESSION["nextpage"]);
@@ -124,7 +117,7 @@ return function (App $app) {
     });
 
     $app->get('/import-character', function (Request $request, Response $response, array $args) use ($container) {
-        if (!isset($_SESSION["account"])) { return $container->get('renderer')->render($response, 'page-generic-message.phtml', ['title' => 'Error', 'message' => "You must be logged in to do that."]); }
+        if (!isset($_SESSION["account"])) { $_SESSION['nextpage'] = 'import-character'; return $response->withRedirect('login'); }
         $_SESSION['federation'] = new Federation($_GET["server"]);
         echo print_r(file_get_contents($_SESSION['federation']->getUrl() . '/character?id=' . urlencode($_GET["id"])));
     });
