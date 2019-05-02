@@ -24,7 +24,7 @@ $GLOBALS["federation"] = [
         "Url" => "https://coh.westus2.cloudapp.azure.com/auroris/public",
         "Policy" => [ // Policy for characters coming from 'Aurora Server'
             "ForceInfluence" => 0, // 0 (or any number) to force inf to that number; false to disable and allow whatever the character has
-            "AllowInventory" => false, // false to delete the inventory, true to allow whatever the character has
+            "AllowInventory" => false // false to delete the inventory, true to allow whatever the character has
         ]
     ],
     [ 
