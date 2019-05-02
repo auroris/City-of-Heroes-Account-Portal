@@ -12,6 +12,11 @@ $GLOBALS["db"] =
 // Path to DBQuery
 $GLOBALS["dbquery"] = "C:\\Issue25Server\\bin\\dbquery.exe";
 
+$GLOBALS["features] = [
+    "NoDuplicateIPs" => false,     // true to disallow multiple account registration from the same IP
+    "AllowNonFederatedPulls" => true // Allows users to pull characters from here to other servers that we haven't federated with
+];
+ 
 // List of federation servers
 $GLOBALS["federation"] = [
     [
@@ -19,13 +24,15 @@ $GLOBALS["federation"] = [
         "Url" => "https://coh.westus2.cloudapp.azure.com/auroris/public",
         "Policy" => [ // Policy for characters coming from 'Aurora Server'
             "ForceInfluence" => 0, // 0 (or any number) to force inf to that number; false to disable and allow whatever the character has
-            "AllowInventory" => false // false to delete the inventory, true to allow whatever the character has
-        ],
+            "AllowInventory" => false, // false to delete the inventory, true to allow whatever the character has
+        ]
+    ],
+    [ 
         "Name" => "City Of Heroes Rebirth",
         "Url" => "https://play.cityofheroesrebirth.com/portal/public/",
-        "Policy" => [
-            "ForceInfluence" => 0,
-            "AllowInventory" => false
+        "Policy" => [ // Policy for characters coming from CoH Rebirth
+            "ForceInfluence" => false, // Allow inf to carry over
+            "AllowInventory" => true // Allow inventory to carry over
         ]
     ]
 ];
