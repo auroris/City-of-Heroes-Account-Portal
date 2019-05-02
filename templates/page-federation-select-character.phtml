@@ -1,0 +1,19 @@
+{% extends "template-base.phtml" %}
+
+{% block title %}Select a Character{% endblock %}
+
+{% block content %}
+<div class="block">
+    <div class="blocktitle">
+        Please select a character
+    </div>
+    <div class="blockbody">
+        Please select a character for server transfer to {{federation_name}}.
+        <ul>
+            {% for character in characters %}
+                <li><a href="{{federation_url}}/import-character?server={{host}}&id={{character.datauri}}">{{character.Name}}</a></li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+{% endblock %}

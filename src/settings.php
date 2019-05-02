@@ -14,7 +14,7 @@ $GLOBALS["dbquery"] = "C:\\Issue25Server\\bin\\dbquery.exe";
 
 // List of federation servers
 $GLOBALS["federation"] = [
-    "Aurora Server" => "https://coh.westus2.cloudapp.azure.com/auroris/public/"
+    ["Name" => "Aurora Server", "Url" => "https://coh.westus2.cloudapp.azure.com/auroris/public"]
 ];
 
 // Your cryptographic keys used for character transfers

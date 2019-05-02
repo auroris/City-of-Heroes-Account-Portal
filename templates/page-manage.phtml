@@ -39,4 +39,24 @@
         </ul>
     </div>
 </div>
+
+<div class="block">
+    <div class="blocktitle">
+        Character Import
+    </div>
+    <div class="blockbody">
+        Please select a server to transfer a character from:
+        <form method="post" action="redirect">
+            <label for="url">Server </label>
+            <select name="url">
+                {% for server in federation %}
+                    <option value="{{server.Url}}/federation?server={{host}}">{{server.Name}}</option>
+                {% endfor %}
+            </select>
+            <input type="submit" name="select" value="Choose this server"/>
+            <input type="hidden" name="{{csrf.keys.name}}" value="{{csrf.name}}">
+            <input type="hidden" name="{{csrf.keys.value}}" value="{{csrf.value}}">
+        </form>
+    </div>
+</div>
 {% endblock %}

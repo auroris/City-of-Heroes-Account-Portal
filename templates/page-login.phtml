@@ -3,9 +3,34 @@
 {% block title %}Log Into Your Account{% endblock %}
 
 {% block content %}
-    {{ include('block-login-form.phtml') }}
-    
     {% if message %}
         {{ include('block-generic.phtml') }}
     {% endif %}
+
+    <div class="block">
+    <div class="blocktitle">
+        Login to your account
+    </div>
+    <div class="blockbody">
+        <form method="post" action="login">
+            <table width="100%">
+                <tr>
+                    <td align="right"><label for="username">Your Username</label></td>
+                    <td><input type="text" name="username" maxlength=14></td>
+                </tr><tr>
+                    <td align="right"><label for="password">Your Password</label></td>
+                    <td><input type="password" name="password" maxlength=16></td>
+                </tr><tr>
+                <tr>
+                    <td colspan="2" align="right">
+                        <input type="submit" name="login" value="Login">
+                    </td>
+                </tr>
+            </table>
+            <input type="hidden" name="nextpage" value="{{nextpage}}">
+            <input type="hidden" name="{{csrf.keys.name}}" value="{{csrf.name}}">
+            <input type="hidden" name="{{csrf.keys.value}}" value="{{csrf.value}}">
+        </form>
+    </div>
+</div>
 {% endblock %}
