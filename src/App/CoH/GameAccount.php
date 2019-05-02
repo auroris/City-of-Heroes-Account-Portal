@@ -173,13 +173,22 @@ class GameAccount {
         if (sqlsrv_fetch($qCharacterUID) === true) {
             sqlsrv_get_field($qCharacterUID, 0);
 
+            // Check DBQuery's existance
+            if (!file_exists($GLOBALS["dbquery"]))
+            { throw new Exception("File " . $GLOBALS["dbquery"] . " is not found."); }
+
             $results = array();
-            exec($GLOBALS["dbquery"] . ' -getcharacter ' . escapeshellarg($name), $results);
+            $ret = 0;
+            exec($GLOBALS["dbquery"] . ' -getcharacter ' . escapeshellarg($name), $results, $ret);
+
+            if ($ret != 0) {
+                throw new Exception("Calling " . $GLOBALS["dbquery"] . " failed with a return code of " . $ret);
+            }
 
             return $results;
         }
         else {
-            return ['no such character ' . $name];
+            throw new Exception('No such character "' . $name . '"');
         }
     }
 
