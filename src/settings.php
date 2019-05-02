@@ -14,7 +14,14 @@ $GLOBALS["dbquery"] = "C:\\Issue25Server\\bin\\dbquery.exe";
 
 // List of federation servers
 $GLOBALS["federation"] = [
-    ["Name" => "Aurora Server", "Url" => "https://coh.westus2.cloudapp.azure.com/auroris/public"]
+    [
+        "Name" => "Aurora Server", 
+        "Url" => "https://coh.westus2.cloudapp.azure.com/auroris/public",
+        "Policy" => [ // Policy for characters coming from 'Aurora Server'
+            "ForceInfluence" => 0, // 0 (or any number) to force inf to that number; false to disable and allow whatever the character has
+            "AllowInventory" => false // false to delete the inventory, true to allow whatever the character has
+        ]
+    ]
 ];
 
 // Your cryptographic keys used for character transfers
