@@ -158,10 +158,29 @@ class GameAccount {
         $qCharacters = sqlsrv_query($conn, "select * FROM cohdb.dbo.ents WHERE authname = ?", array($this->username));
         $characters = array();
         while($row = sqlsrv_fetch_array($qCharacters, SQLSRV_FETCH_ASSOC)) {
+            $row["datauri"] = DataSanitization::encrypt($row["Name"], $GLOBALS["crypto"]["key"], $GLOBALS["crypto"]["iv"]);
             array_push($characters, $row);
         }
 
         return $characters;
+    }
+
+    public static function getCharacter($name) {
+        $name = DataSanitization::decrypt($name, $GLOBALS["crypto"]["key"], $GLOBALS["crypto"]["iv"]);
+
+        $conn = SqlServer::getInstance()->getConnection();
+        $qCharacterUID = sqlsrv_query($conn, "SELECT ContainerId FROM cohdb.dbo.ents WHERE name = ?", array($name));
+        if (sqlsrv_fetch($qCharacterUID) === true) {
+            sqlsrv_get_field($qCharacterUID, 0);
+
+            $results = array();
+            exec($GLOBALS["dbquery"] . ' -getcharacter ' . escapeshellarg($name), $results);
+
+            return $results;
+        }
+        else {
+            return ['no such character ' . $name];
+        }
     }
 
     function getUsername()

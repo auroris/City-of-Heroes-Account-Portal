@@ -1,4 +1,29 @@
 <?php
+
+// Your DB connection information and credentials
+$GLOBALS["db"] =
+[
+    'Server' => 'localhost\sqlexpress',
+    'Database' => 'cohauth', 
+    'Username'=>'CoHDB', 
+    'Password'=>'bqaDDMA7QUKNABYdKQrj'
+];
+
+// Path to DBQuery
+$GLOBALS["dbquery"] = "C:\\Issue25Server\\bin\\dbquery.exe";
+
+// List of federation servers
+$GLOBALS["federation"] = [
+    "Aurora Server" => "https://coh.westus2.cloudapp.azure.com/auroris/public/"
+];
+
+// Your cryptographic keys used for character transfers
+$GLOBALS["crypto"] = [
+    "key" => "Some Key",
+    "iv" => "Some Initialization Vector"
+];
+
+// Slim PHP settings
 return [
     'settings' => [
         'displayErrorDetails' => true, // set to false in production
@@ -15,8 +40,6 @@ return [
             'name' => 'slim-app',
             'path' => isset($_ENV['docker']) ? 'php://stdout' : __DIR__ . '/../logs/app.log',
             'level' => \Monolog\Logger::DEBUG,
-        ],
-
-        'dbquery' => "C:\\Issue25Server\\bin\\dbquery.exe"
-    ],
+        ]
+    ]
 ];

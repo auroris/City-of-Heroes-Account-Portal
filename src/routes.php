@@ -72,8 +72,8 @@ return function (App $app) {
         return $response->withRedirect('./');
     });
 
-    $app->get('/character/{name}', function (Request $request, Response $response, array $args) use ($container) {
+    $app->get('/character', function (Request $request, Response $response, array $args) use ($container) {
         $newResponse = $response->withHeader('Content-type', 'text/plain');
-        return $newResponse->write(implode("\n", GameData::getCharacter($args['name'], $container)));
+        return $newResponse->write(implode("\n", GameAccount::getCharacter($_GET['id'])));
     });
 };

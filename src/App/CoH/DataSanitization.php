@@ -30,6 +30,24 @@ class DataSanitization {
             throw new Exception("Password must be 8-16 characters in length.");
         }
     }
+
+    public static function encrypt($text, $key, $iv)
+    {
+        $method = "AES-256-CBC";
+        $ivlen = openssl_cipher_iv_length($method);
+        $key = substr(hash('sha256', $key), 0, $ivlen);
+        $iv = substr(hash('sha256', $iv), 0, $ivlen);
+        return urlencode(openssl_encrypt($text, $method, $key, 0, $iv));
+    }
+
+    public static function decrypt($text, $key, $iv)
+    {
+        $method = "AES-256-CBC";
+        $ivlen = openssl_cipher_iv_length($method);
+        $key = substr(hash('sha256', $key), 0, $ivlen);
+        $iv = substr(hash('sha256', $iv), 0, $ivlen);
+        return openssl_decrypt($text, $method, $key, 0, $iv);
+    }
 }
 
 ?>
