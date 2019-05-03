@@ -21,7 +21,7 @@ extension=php_pdo_sqlsrv_73_ts_x64
 
 * Download and extract this repository's files into `C:\xampp\htdocs`.
 
-* Open the command line, navigate to the root directory of this website and run `php composer.phar -install`. This will download required library files.
+* Open the command line, navigate to the root directory of this website and run `php composer.phar install`. This will download required library files.
 
 * Finally, open `\src\settings.php` and configure your database credentials, path to dbquery.exe and other settings.
 
