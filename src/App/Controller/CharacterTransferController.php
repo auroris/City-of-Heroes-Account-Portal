@@ -20,17 +20,15 @@ class CharacterTransferController
 
     public function GetCharacter(Request $request, Response $response, array $args)
     {
+		$character = new Character(DataHandling::Decrypt($args['encrypted_name'], $GLOBALS['crypto']['key'], $GLOBALS['crypto']['iv']));
         if (isset($args['type']) && 'json' == $args['type']) {
             $newResponse = $response->withHeader('Content-type', 'application/json');
-            $character = new Character(DataHandling::Decrypt($args['encrypted_name'], $GLOBALS['crypto']['key'], $GLOBALS['crypto']['iv']));
 
             return $newResponse->write($character->ToJSON());
-        } else {
-            $newResponse = $response->withHeader('Content-type', 'text/plain');
-            $character = new Character(DataHandling::Decrypt($args['encrypted_name'], $GLOBALS['crypto']['key'], $GLOBALS['crypto']['iv']));
-
-            return $newResponse->write(implode("\n", $character->ToArray()));
         }
+		$newResponse = $response->withHeader('Content-type', 'text/plain');
+
+		return $newResponse->write(implode("\n", $character->ToArray()));
     }
 
     public function PutCharacter(Request $request, Response $response, array $args)
