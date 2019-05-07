@@ -7,7 +7,7 @@ use Slim\Http\Request;
 use Slim\Http\Response;
 use App\Model\Character;
 use App\Util\DataHandling;
-use Exception
+use Exception;
 
 class CharacterTransferController
 {
@@ -36,7 +36,7 @@ class CharacterTransferController
     public function PutCharacter(Request $request, Response $response, array $args)
     {
 
-		$name = DataHandling::Decrypt($args['encrypted_name'], $GLOBALS['crypto']['key'], $GLOBALS['crypto']['iv'])
+		$name = DataHandling::Decrypt($args['encrypted_name'], $GLOBALS['crypto']['key'], $GLOBALS['crypto']['iv']);
 		$arrtributes = $request->getParedBody();
 
 		// FIXME: Return HTTP error response instead?
