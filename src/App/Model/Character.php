@@ -97,6 +97,12 @@ class Character
         }
     }
 
+	// FIXME: Needs better name. Serialize is reserved.
+	private function Unmartial()
+	{
+		// TODO: write to file and pass to dbserver -putchar
+	}
+
     public function ToJSON()
     {
         return json_encode($this->attributes, JSON_THROW_ON_ERROR);
