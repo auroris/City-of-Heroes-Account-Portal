@@ -28,26 +28,6 @@ class DataHandling
         }
     }
 
-    public static function Encrypt($text, $key, $iv)
-    {
-        $method = 'AES-256-CBC';
-        $ivlen = openssl_cipher_iv_length($method);
-        $key = substr(hash('sha256', $key), 0, $ivlen);
-        $iv = substr(hash('sha256', $iv), 0, $ivlen);
-
-        return urlencode(openssl_encrypt($text, $method, $key, 0, $iv));
-    }
-
-    public static function Decrypt($text, $key, $iv)
-    {
-        $method = 'AES-256-CBC';
-        $ivlen = openssl_cipher_iv_length($method);
-        $key = substr(hash('sha256', $key), 0, $ivlen);
-        $iv = substr(hash('sha256', $iv), 0, $ivlen);
-
-        return openssl_decrypt($text, $method, $key, 0, $iv);
-    }
-    
     /* Checksum algorithm */
     private static function Adler32($data)
     {
@@ -55,8 +35,7 @@ class DataHandling
         $a = 1;
         $b = 0;
         $len = strlen($data);
-        for($index = 0; $index < $len; $index++)
-        {
+        for ($index = 0; $index < $len; ++$index) {
             $a = ($a + ord($data[$index])) % $mod_adler;
             $b = ($b + $a) % $mod_adler;
         }
@@ -70,12 +49,34 @@ class DataHandling
         $authname = strtolower($authname);
         $a32 = DataHandling::adler32($authname);
         $a32hex = sprintf('%08s', dechex($a32));
-        $a32hex = substr($a32hex, 6, 2) . substr($a32hex, 4, 2) . substr($a32hex, 2, 2) . substr($a32hex, 0, 2);
-        $digest = hash('sha512', $password . $a32hex, TRUE);
+        $a32hex = substr($a32hex, 6, 2).substr($a32hex, 4, 2).substr($a32hex, 2, 2).substr($a32hex, 0, 2);
+        $digest = hash('sha512', $password.$a32hex, true);
+
         return $digest;
     }
 
-    public static function BinPassword($authname, $password) {
-        return bin2hex(DataHandling::HashPassword($authname, $password)); 
+    public static function BinPassword($authname, $password)
+    {
+        return bin2hex(DataHandling::HashPassword($authname, $password));
+    }
+
+    public static function Encrypt($text, $key, $iv)
+    {
+        $method = 'AES-256-CBC';
+        $ivlen = openssl_cipher_iv_length($method);
+        $key = substr(hash('sha256', $key), 0, $ivlen);
+        $iv = substr(hash('sha256', $iv), 0, $ivlen);
+
+        return openssl_encrypt($text, $method, $key, 0, $iv);
+    }
+
+    public static function Decrypt($text, $key, $iv)
+    {
+        $method = 'AES-256-CBC';
+        $ivlen = openssl_cipher_iv_length($method);
+        $key = substr(hash('sha256', $key), 0, $ivlen);
+        $iv = substr(hash('sha256', $iv), 0, $ivlen);
+
+        return openssl_decrypt($text, $method, $key, 0, $iv);
     }
 }

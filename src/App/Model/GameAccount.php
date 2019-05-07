@@ -134,7 +134,7 @@ class GameAccount
         $characters = array();
         $qCharacters = $this->sql->FetchAssoc('select * FROM cohdb.dbo.ents WHERE authname = ?', array($this->username));
         foreach ($qCharacters as $row) {
-            $row['datauri'] = DataHandling::Encrypt($row['Name'], $GLOBALS['crypto']['key'], $GLOBALS['crypto']['iv']);
+            $row['datauri'] = urlencode(DataHandling::Encrypt($row['Name'], $GLOBALS['crypto']['key'], $GLOBALS['crypto']['iv']));
             array_push($characters, $row);
         }
 
@@ -150,8 +150,16 @@ class GameAccount
 
     public function GetPassword()
     {
+        $this->wakeup();
         $qPassword = $this->sql->FetchAssoc('SELECT CONVERT(VARCHAR, password) AS pass FROM cohauth.dbo.user_auth WHERE UPPER(account) = UPPER(?)', array($this->username));
 
-        return $qPassword['pass'];
+        return $qPassword[0]['pass'];
+    }
+
+    public function VerifyHashedPassword($hashedPassword)
+    {
+        $this->wakeup();
+
+        return $this->sql->ReturnsRows('SELECT 1 FROM cohauth.dbo.user_auth WHERE UPPER(account) = UPPER(?) AND CONVERT(VARCHAR, password) = ?', array($this->username, $hashedPassword));
     }
 }

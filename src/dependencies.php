@@ -12,7 +12,6 @@ return function (App $app) {
 
         return $csrf;
     };
-    $app->add($container->get('csrf'));
 
     // view renderer
     $container['renderer'] = function ($c) {

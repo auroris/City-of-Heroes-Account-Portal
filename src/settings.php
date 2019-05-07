@@ -18,15 +18,15 @@ $GLOBALS['federation_server'] = 'Aurora Server'; // Our name in other server's F
 $GLOBALS['federation'] = [
     [
         'Name' => 'Aurora Server',
-        'Url' => 'https://coh.westus2.cloudapp.azure.com/auroris/public',
+        'Url' => 'http://localhost:8080/aleena.slim.portal/public',
         'Policy' => [ // Policy for characters coming from 'Aurora Server'
             'ForceInfluence' => 0, // 0 (or any number) to force inf to that number; false to disable and allow whatever the character has
-            'ForceAccessLEvel' => 0, // 0 (or any number) to force access level to that number; false to disable and allow whatever the character has
+            'ForceAccessLevel' => 0, // 0 (or any number) to force access level to that number; false to disable and allow whatever the character has
             'AllowInventory' => false, // false to delete the inventory, true to allow whatever the character has
         ],
-        'crypto' => [ // Configure the same crypto keys with Aurora Server
-            'key' => 'Some Key',
-            'iv' => 'Some Initialization Vector',
+        'Crypto' => [ // Configure the same crypto keys with Aurora Server
+            'key' => 'AuroraKey',
+            'iv' => 'AuroraVector',
         ],
     ],
     [
@@ -34,10 +34,10 @@ $GLOBALS['federation'] = [
         'Url' => 'https://play.cityofheroesrebirth.com/portal/public',
         'Policy' => [ // Policy for characters coming from CoH Rebirth
             'ForceInfluence' => false, // Allow inf to carry over
-            'ForceAccessLEvel' => 0, // 0 (or any number) to force access level to that number; false to disable and allow whatever the character has
+            'ForceAccessLevel' => 0, // 0 (or any number) to force access level to that number; false to disable and allow whatever the character has
             'AllowInventory' => true, // Allow inventory to carry over
         ],
-        'crypto' => [ // This server's entry on Rebirth must have the same crypto keys as below, and vice versa.
+        'Crypto' => [ // This server's entry on Rebirth must have the same crypto keys as below, and vice versa.
             'key' => 'RebirthKey',
             'iv' => 'RebirthVector',
         ],

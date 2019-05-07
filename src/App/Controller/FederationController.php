@@ -4,30 +4,63 @@ namespace App\Controller;
 
 use Psr\Container\ContainerInterface;
 use App\Util\Http;
-use App\Util\DataHandling;
+use Slim\Http\Request;
+use Slim\Http\Response;
+use App\Model\GameAccount;
+use App\Model\Character;
+use App\Messages\Message;
 
 class FederationController
 {
     protected $container;
 
-    // constructor receives container instance
     public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
     }
 
-    public function BeginCharacterTransfer(Request $request, Response $response, array $args)
+    public function TransferCharacterRequest(Request $request, Response $response, array $args)
     {
-        $fedServer = FindFederationServerByName($_POST['server']);
+        $fedServer = $this->FindFederationServerByName($_POST['server']);
+        $accountCheck = new Message($_POST['server']);
+        $accountCheck->username = $_SESSION['account']->GetUsername();
+        $accountCheck->password = $_SESSION['account']->GetPassword();
+        $responseAccountCheck = new Message();
+        $responseAccountCheck->Unserialize(Http::Post($fedServer['Url'].'/federation/transfer-check', ['message' => json_encode($accountCheck)]));
 
-        $_SESSION['account']->GetUsername;
+        if ('Ok' == $responseAccountCheck->status) {
+            //$responseAccountCheck->policy holds the remote server's policy regarding characters coming from this system
 
-        die(Http::Post($fedServer['Url'].'/federation/check-account', $this->CreateMessage($_POST['server'], ['username' => $_SESSION['account']->GetUsername(), 'password' => $_SESSION['account']->GetPassword()])));
+            $character = new Character(DataHandling::Decrypt($_POST['character'], $GLOBALS['crypto']['key'], $GLOBALS['crypto']['iv']));
+            $transmit = new Message($_POST['server']);
+            $transmit->character = $character->ToJSON();
+            $responseTransmit = new Message();
+            $responseTransmit->Unserialize(Http::Post($fedServer['Url'].'/federation/transfer-character', ['message' => json_encode($transmit)]));
+        }
     }
 
-    public function CheckAccount(Request $request, Response $response, array $args)
+    public function TransferCharacterCheck(Request $request, Response $response, array $args)
     {
-        die($this->OpenMessage($_POST['Server'], $_POST['Message']));
+        $message = new Message();
+        $message->Unserialize($_POST['message'], true);
+        $gameAccount = new GameAccount($message->username);
+        $fedServer = $this->FindFederationServerByName($message->from);
+
+        $returnMessage = new Message($message->from);
+        $returnMessage->policy = $fedServer['Policy'];
+
+        $newResponse = $response->withHeader('Content-type', 'application/json');
+        if ($gameAccount->VerifyHashedPassword($message->password)) {
+            $returnMessage->status = 'Ok';
+            $newResponse->write(json_encode($returnMessage));
+        } else {
+            $returnMessage->status = 'Fail';
+            $newResponse->write(json_encode($returnMessage));
+        }
+    }
+
+    public function TransferCharacterUpload(Request $request, Response $response, array $args)
+    {
     }
 
     // Find a federation server by its name.
@@ -38,25 +71,5 @@ class FederationController
                 return $item;
             }
         }
-
-        throw new Exception('Unknown federation server ' + $name);
-    }
-
-    // Given a server's name, look up the pre-agreed crypto keys and encrypt the json-encoded string of the array passed
-    private function CreateMessage($addressTo, $args = [])
-    {
-        $fedServer = $this->FindFederationServerByName($addressTo);
-
-        $message = ['Server' => $GLOBALS['federation_server'],
-            'Message' => DataHandling::Encrypt(json_encode($args), $fedServer['Crypto']['key'], $fedServer['Crypto']['iv']),
-        ];
-    }
-
-    // Given a server's name, look up the pre-agreed crypto keys and decrypt the json-encoded string into an array
-    private function OpenMessage($addressFrom, $message)
-    {
-        $fedServer = $this->FindFederationServerByName($addressFrom);
-
-        return json_decode(DataHandling::Decrypt($message, $fedServer['Crypto']['key'], $fedServer['Crypto']['iv']));
     }
 }
