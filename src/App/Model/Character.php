@@ -39,9 +39,7 @@ class Character
     {
         // Let's loop through every result and determine if it's a single key=value or array of sorts.
         foreach ($this->results as $result) {
-            // Some values have "//" and also have "// " at the start - Which is very odd might be best to see if we can fix it at source or not.
-            // We need to remove these values to allow the below to extract correctly.
-            // @TODO: Check this doesn't impact the import later? Are the // Needed at all? do these rows even have to be extracted?
+            // Provide ability to initiate a 1:1 copy or generate a new char.
             if (false !== strpos($result, '//')) {
                 if (true === $this->persistent) {
                     $result = str_replace(['// ', '//'], '', $result);
