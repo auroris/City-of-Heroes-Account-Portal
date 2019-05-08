@@ -52,7 +52,7 @@ class GameAccount {
         $hash = GamePassword::binPassword($username, $password);
 
         // SQL statements to execute
-        $sql1 = "INSERT INTO cohauth.dbo.user_account (account, uid, forum_id, pay_stat, last_ip) VALUES (?, ?, ?, 1014, ?)";
+        $sql1 = "INSERT INTO cohauth.dbo.user_account (account, uid, forum_id, pay_stat) VALUES (?, ?, ?, 1014)";
         $sql2 = "INSERT INTO cohauth.dbo.user_auth (account, password, salt, hash_type) VALUES (?, CONVERT(BINARY(128),?), 0, 1)";
         $sql3 = "INSERT INTO cohauth.dbo.user_data (uid, user_data) VALUES (?, 0x0080C2E000D00B0C000000000CB40058)";
         $sql4 = "INSERT INTO cohauth.dbo.user_server_group (uid, server_group_id) VALUES (?, 1)";
@@ -60,7 +60,7 @@ class GameAccount {
         // Insert the database data
         sqlsrv_begin_transaction($conn);
        
-        if(sqlsrv_query($conn, $sql1, array($username, $uid, $uid, GameAccount::getClientIP())) === false)
+        if(sqlsrv_query($conn, $sql1, array($username, $uid, $uid)) === false)
         {
             sqlsrv_rollback($conn);
             $logger->error("Error when creating account; could not run " . $sql1 . " [username: '" . $username . "', uid: '" . $uid . "', forum_id: '" . $uid . "']\n" . print_r(sqlsrv_errors(), true));
