@@ -1,5 +1,7 @@
 <?php
 
+// This is an example file only.
+
 $GLOBALS['federation'] = [
     [
         'Name' => 'Aurora Server',

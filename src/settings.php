@@ -1,7 +1,7 @@
 <?php
 
 // The web portal's configuration
-$dotenv = Dotenv\Dotenv::create(__DIR__, 'Config/.env');
+$dotenv = Dotenv\Dotenv::create(__DIR__, 'Config/config.env');
 $dotenv->load();
 
 // The Federation's configuration
