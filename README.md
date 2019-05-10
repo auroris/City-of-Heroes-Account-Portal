@@ -23,7 +23,7 @@ extension=php_pdo_sqlsrv_73_ts_x64
 
 * Open the command line, navigate to the root directory of this website and run `php composer.phar install`. This will download required library files.
 
-* Finally, open `\src\settings.php` and configure your database credentials, path to dbquery.exe and other settings.
+* Configuration is stored in \App\Config. Rename config.env.example to config.env and put in your database credentials, your command to start dbquery, and your portal's name and crypto keys. Just put some random typing as your key and iv values.
 
 # Customization
 
