@@ -34,7 +34,7 @@
     <div class="blockbody">
         <ul>
             {% for character in characters %}
-                <li><a href="./character?id={{character.datauri}}">{{character.Name}}</a></li>
+                <li><a href="./api/character/{{character.datauri}}/raw">{{character.Name}}</a></li>
             {% endfor %}
         </ul>
     </div>
@@ -42,18 +42,26 @@
 
 <div class="block">
     <div class="blocktitle">
-        Character Import
+        Character Transfer
     </div>
     <div class="blockbody">
-        Please select a server to transfer a character from:
-        <form method="post" action="redirect">
-            <label for="url">Server </label>
-            <select name="url">
+        <form method="post" action="./federation/transfer-character-request">
+            <p>Please select a server and character to transfer:</p>
+            <label for="server">Server</label>
+            <select name="server">
                 {% for server in federation %}
-                    <option value="{{server.Url}}/federation?server={{host}}">{{server.Name}}</option>
+                    <option value="{{server.Name}}">{{server.Name}}</option>
                 {% endfor %}
             </select>
-            <input type="submit" name="select" value="Choose this server"/>
+            <br />
+            <label for="character">Character</label>
+            <select name="character">
+            {% for character in characters %}
+                <option value="{{character.datauri}}">{{character.Name}}</option>
+            {% endfor %}
+            </select>
+            <br />
+            <input type="submit" name="select" value="Transfer Now"/>
             <input type="hidden" name="{{csrf.keys.name}}" value="{{csrf.name}}">
             <input type="hidden" name="{{csrf.keys.value}}" value="{{csrf.value}}">
         </form>

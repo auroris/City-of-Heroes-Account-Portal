@@ -10,7 +10,6 @@
     <div class="blockbody">
         <p>This City of Heroes private server was created for friends to play together in a fun atmosphere.</p>
         <p>There are {{accounts}}  registered accounts holding {{characters}} characters.</p>
-        <p><span style="color: bright-red;">{{online}}</span> players are online.</p>
     </div>
 </div>
 
@@ -22,6 +21,20 @@
     </div>
     <div class="blockbody">
         <p><a href="https://discord.gg/UyBcpxa">Join the community on Discord.</a></p>
+    </div>
+</div>
+{% endblock %}
+
+{% block aftermenu %}
+<br />
+<div class="littleblock">
+    <div class="blocktitle">
+        {{online|length}} Players Online
+    </div>
+    <div class="blockbody">
+        {% for char in online %}
+            {{ char }}<br />
+        {% endfor %}
     </div>
 </div>
 {% endblock %}
