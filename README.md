@@ -32,3 +32,7 @@ Website content can be found in the `\templates` directory. You will need to cus
 * `page-index.phtml`
 * `template-menu.phtml` and
 * `block-client-download.phtml`
+
+# Support
+
+Support is available from Aleena on Discord. https://discord.gg/KEsXYvD in the #account-portal-support channel.
