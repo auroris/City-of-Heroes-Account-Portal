@@ -3,12 +3,12 @@
 namespace App\Controller;
 
 use Psr\Container\ContainerInterface;
-use App\Util\Http;
 use Slim\Http\Request;
 use Slim\Http\Response;
 use App\Model\GameAccount;
-use App\Model\Character;
 use App\Messages\Message;
+use App\Util\Http;
+use App\Model\Character;
 
 class FederationController
 {
@@ -19,48 +19,50 @@ class FederationController
         $this->container = $container;
     }
 
-    public function TransferCharacterRequest(Request $request, Response $response, array $args)
+    // Prepares a message to the destination server and transfers you there to perform the character pull
+    public function TransferCharacterRequest(Request $HttpRequest, Response $HttpResponse, array $HttpArgs)
     {
         $fedServer = $this->FindFederationServerByName($_POST['server']);
-        $accountCheck = new Message($_POST['server']);
-        $accountCheck->username = $_SESSION['account']->GetUsername();
-        $accountCheck->password = $_SESSION['account']->GetPassword();
-        $responseAccountCheck = new Message();
-        $responseAccountCheck->Unserialize(Http::Post($fedServer['Url'].'/federation/transfer-check', ['message' => json_encode($accountCheck)]));
+        $myUsername = $_SESSION['account']->GetUsername();
+        $myPassword = $_SESSION['account']->GetPassword();
 
-        if ('Ok' == $responseAccountCheck->status) {
-            //$responseAccountCheck->policy holds the remote server's policy regarding characters coming from this system
+        $login = new Message($_POST['server']);
+        $login->username = $myUsername;
+        $login->password = $myPassword;
+        $login->action = 'PullCharacter';
+        $login->character = $_POST['character'];
 
-            $character = new Character(DataHandling::Decrypt($_POST['character'], $GLOBALS['crypto']['key'], $GLOBALS['crypto']['iv']));
-            $transmit = new Message($_POST['server']);
-            $transmit->character = $character->ToJSON();
-            $responseTransmit = new Message();
-            $responseTransmit->Unserialize(Http::Post($fedServer['Url'].'/federation/transfer-character', ['message' => json_encode($transmit)]));
-        }
+        return $HttpResponse->withRedirect($fedServer['Url'].'/federation/login?message='.urlencode(json_encode($login)));
     }
 
-    public function TransferCharacterCheck(Request $request, Response $response, array $args)
+    public function Login(Request $HttpRequest, Response $HttpResponse, array $HttpArgs)
     {
         $message = new Message();
-        $message->Unserialize($_POST['message'], true);
+        $message->Unserialize($_GET['message']);
         $gameAccount = new GameAccount($message->username);
-        $fedServer = $this->FindFederationServerByName($message->from);
-
-        $returnMessage = new Message($message->from);
-        $returnMessage->policy = $fedServer['Policy'];
-
-        $newResponse = $response->withHeader('Content-type', 'application/json');
         if ($gameAccount->VerifyHashedPassword($message->password)) {
-            $returnMessage->status = 'Ok';
-            $newResponse->write(json_encode($returnMessage));
+            $_SESSION['account'] = $gameAccount;
+            $_SESSION['pullcharacter'] = ['character' => $message->character, 'from' => $message->from];
+
+            return $HttpResponse->withRedirect('pull-character');
         } else {
-            $returnMessage->status = 'Fail';
-            $newResponse->write(json_encode($returnMessage));
+            $_SESSION['nextpage'] = 'federation/pull-character';
+            $_SESSION['pullcharacter'] = ['character' => $message->character, 'from' => $message->from];
+
+            return $HttpResponse->withRedirect('../login');
         }
     }
 
-    public function TransferCharacterUpload(Request $request, Response $response, array $args)
+    public function PullCharacter(Request $HttpRequest, Response $HttpResponse, array $HttpArgs)
     {
+        $fedServer = $this->FindFederationServerByName($_SESSION['pullcharacter']['from']);
+        $rawData = Http::Get($fedServer['Url'].'/api/character/'.$_SESSION['pullcharacter']['character'].'/raw');
+        $character = new Character();
+        $character->SetArray(explode("\n", $rawData));
+
+        $character->AuthId = $_SESSION['account']->GetUID();
+        $character->Name = 'Aleena3';
+        $character->PutCharacter();
     }
 
     // Find a federation server by its name.

@@ -34,8 +34,8 @@ return function (App $app) {
     });
 
     $app->group('/federation', function (App $app) {
+        $app->get('/login', FederationController::class.':Login');
         $app->post('/transfer-character-request', FederationController::class.':TransferCharacterRequest');
-        $app->post('/transfer-character-check', FederationController::class.':TransferCharacterCheck');
-        $app->post('/transfer-character-upload', FederationController::class.':TransferCharacterUpload');
+        $app->get('/pull-character', FederationController::class.':PullCharacter');
     });
 };

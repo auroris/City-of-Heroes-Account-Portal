@@ -16,7 +16,7 @@ class Message implements \JSONSerializable
         $this->to = $to;
 
         if ('' == $from) {
-            $this->from = $GLOBALS['federation_server'];
+            $this->from = getenv('portal_name');
         } else {
             $this->from = $from;
         }

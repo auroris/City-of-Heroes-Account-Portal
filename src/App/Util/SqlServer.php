@@ -12,15 +12,15 @@ class SqlServer
     private function __construct()
     {
         try {
-            $this->conn = sqlsrv_connect($GLOBALS['db']['Server'], array(
-                'Database' => $GLOBALS['db']['Database'],
-                'Uid' => $GLOBALS['db']['Username'],
-                'PWD' => $GLOBALS['db']['Password'], ));
+            $this->conn = sqlsrv_connect(getenv('db_server'), array(
+                'Database' => getenv('db_database'),
+                'Uid' => getenv('db_username'),
+                'PWD' => getenv('db_password'), ));
             if (false == $this->conn) {
-                die('<pre>'.print_r(sqlsrv_errors(), true).'</pre>');
+                die("<pre>Error connecting to '".getenv('db_server')."' with username '".getenv('db_username').'"'."\n\n".print_r(sqlsrv_errors(), true));
             }
         } catch (Exception $e) {
-            die(print_r($e));
+            die("<pre>An exception was thrown while connecting to '".getenv('db_server')."' with username '".getenv('db_username').'"'."\n\n".print_r($e, true));
         }
     }
 

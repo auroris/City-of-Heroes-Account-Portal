@@ -13,7 +13,7 @@ class Http
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         $response = curl_exec($ch);
         if (200 !== curl_getinfo($ch, CURLINFO_HTTP_CODE)) {
-            throw new Exception(print_r($response, true));
+            throw new Exception($url."\n".print_r($response, true));
         }
         curl_close($ch);
 

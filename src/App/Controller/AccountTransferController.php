@@ -14,7 +14,7 @@ class AccountTransferController
     public function ListCharacters(Request $request, Response $response, array $args)
     {
         $newResponse = $response->withHeader('Content-type', 'application/json');
-        $account = new GameAccount(DataHandling::Decrypt($args['encrypted_name'], $GLOBALS['crypto']['key'], $GLOBALS['crypto']['iv']));
+        $account = new GameAccount(DataHandling::Decrypt($args['encrypted_name'], getenv('portal_key'), getenv('portal_iv')));
 
         return $newResponse->write($account->GetCharacterList());
     }

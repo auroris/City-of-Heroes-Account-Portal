@@ -134,7 +134,7 @@ class GameAccount
         $characters = array();
         $qCharacters = $this->sql->FetchAssoc('select * FROM cohdb.dbo.ents WHERE authname = ?', array($this->username));
         foreach ($qCharacters as $row) {
-            $row['datauri'] = urlencode(DataHandling::Encrypt($row['Name'], $GLOBALS['crypto']['key'], $GLOBALS['crypto']['iv']));
+            $row['datauri'] = urlencode(DataHandling::Encrypt($row['Name'], getenv('portal_key'), getenv('portal_iv')));
             array_push($characters, $row);
         }
 
@@ -161,5 +161,10 @@ class GameAccount
         $this->wakeup();
 
         return $this->sql->ReturnsRows('SELECT 1 FROM cohauth.dbo.user_auth WHERE UPPER(account) = UPPER(?) AND CONVERT(VARCHAR, password) = ?', array($this->username, $hashedPassword));
+    }
+
+    public function GetUID()
+    {
+        return $this->uid;
     }
 }
