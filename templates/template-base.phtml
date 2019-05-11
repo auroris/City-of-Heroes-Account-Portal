@@ -40,7 +40,18 @@
                     {{ menu.menuMacro(menu_tree) }}
                 </div>
                 
-                {% block aftermenu %}{% endblock %}
+                <br />
+                <div class="littleblock">
+                    <div class="blocktitle">
+                        {{online|length}} Players Online
+                    </div>
+                    <div class="blockbody">
+                        {% for char in online %}
+                            {{ char }}<br />
+                        {% endfor %}
+                    </div>
+                </div>
+
             </td>
             <td valign="top">
                 {% block content %}{% endblock %}

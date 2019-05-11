@@ -12,7 +12,7 @@ class MenuExtension extends \Twig_Extension implements \Twig_Extension_GlobalsIn
     {
         $menu = new \App\Controller\MenuController();
 
-        return ['menu_tree' => $menu->GetMenu()];
+        return $menu->GetMenu();
     }
 
     public function getName()

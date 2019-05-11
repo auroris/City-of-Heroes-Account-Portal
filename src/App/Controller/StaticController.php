@@ -23,7 +23,7 @@ class StaticController
         return $this->container->get('renderer')->render($response, 'page-index.phtml', [
             'accounts' => $gameStats->CountAccounts(),
             'characters' => $gameStats->CountCharacters(),
-            'online' => $gameStats->GetOnline(),
+            'status' => $gameStats->GetServerStatus()
         ]);
     }
 
