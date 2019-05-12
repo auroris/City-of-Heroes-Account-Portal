@@ -60,8 +60,28 @@ class FederationController
         $character = new Character();
         $character->SetArray(explode("\n", $rawData));
 
+        // Apply to the correct account
         $character->AuthId = $_SESSION['account']->GetUID();
-        $character->Name = 'Aleena3';
+        $character->AuthName = $_SESSION['account']->GetUsername();
+
+        // Apply the ForceInfluence policy
+        if (isset($fedServer['Policy']['ForceInfluence']) && false !== $fedServer['Policy']['ForceInfluence']) {
+            $character->InfluencePoints = $fedServer['Policy']['ForceInfluence'];
+        }
+
+        // Apply rhe ForceAccessLevel policy
+        if (isset($fedServer['Policy']['ForceAccessLevel']) && false !== $fedServer['Policy']['ForceAccessLevel']) {
+            if (isset($character->AccessLevel)) { //AccessLevel is not currently specified in our exports, so it defaults to null right now
+                $character->AccessLevel = $fedServer['Policy']['ForceAccessLevel'];
+            }
+        }
+
+        // Apply the AllowInventory policy
+        if (isset($fedServer['Policy']['AllowInventory']) && false === $fedServer['Policy']['AllowInventory']) {
+            unset($character->InvSalvage0);
+            unset($character->InvRecipeInvention);
+        }
+
         $character->PutCharacter();
     }
 

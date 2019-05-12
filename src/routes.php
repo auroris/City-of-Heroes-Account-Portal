@@ -3,8 +3,8 @@
 use Slim\App;
 use App\Controller\StaticController;
 use App\Controller\GameAccountController;
-use App\Controller\CharacterTransferController;
 use App\Controller\FederationController;
+use App\Controller\APIController;
 use App\Util\MonoLogger;
 
 return function (App $app) {
@@ -25,12 +25,11 @@ return function (App $app) {
     })->add($container->get('csrf'));
 
     $app->group('/api', function (App $app) {
-        $app->post('/character', CharacterTransferController::class.':PutCharacter');
-        $app->get('/character/{encrypted_name}/[{type}]', CharacterTransferController::class.':GetCharacter');
-        $app->delete('/character/{id}', CharacterTransferController::class.':DeleteCharacter');
+        $app->get('/character/{encrypted_name}/[{type}]', APIController::class.':GetCharacter');
+        $app->delete('/character/{id}', APIController::class.':DeleteCharacter');
 
-        $app->post('/account', AccountTransferController::class.':CreateOrUpdateAccount');
-        $app->get('/account/character-list/{encrypted_name}', AccountTransferController::class.':ListCharacters');
+        $app->post('/account', APIController::class.':CreateOrUpdateAccount');
+        $app->get('/account/character-list/{encrypted_name}', APIController::class.':ListCharacters');
     });
 
     $app->group('/federation', function (App $app) {

@@ -9,7 +9,7 @@ use App\Model\Character;
 use App\Util\DataHandling;
 use Exception;
 
-class CharacterTransferController
+class APIController
 {
     protected $container;
 
@@ -32,23 +32,19 @@ class CharacterTransferController
         return $newResponse->write(implode("\n", $character->ToArray()));
     }
 
-    // FIXME: Add JSON support?
-    public function PutCharacter(Request $request, Response $response, array $args)
-    {
-        $name = DataHandling::Decrypt($args['encrypted_name'], getenv('portal_key'), getenv('portal_iv'));
-        $arrtributes = $request->getParedBody();
-
-        // FIXME: Return HTTP error response instead?
-        if (isset($attributes['name']) && $name != $attributes['name']) {
-            throw(new Exception('post name and query name differ'));
-        }
-        $character = new Character($name);
-        $character->attributes = $attributes;
-        $character->reconstruct();
-        $character->unmartial();
-    }
-
     public function DeleteCharacter(Request $request, Response $response, array $args)
     {
+    }
+
+    public function CreateOrUpdateAccount(Request $request, Response $response, array $args)
+    {
+    }
+
+    public function ListCharacters(Request $request, Response $response, array $args)
+    {
+        $newResponse = $response->withHeader('Content-type', 'application/json');
+        $account = new GameAccount(DataHandling::Decrypt($args['encrypted_name'], getenv('portal_key'), getenv('portal_iv')));
+
+        return $newResponse->write($account->GetCharacterList());
     }
 }
