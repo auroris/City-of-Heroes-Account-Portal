@@ -1,14 +1,12 @@
 {
-    "name": "slim/slim-skeleton",
-    "description": "A Slim Framework skeleton application for rapid development",
-    "keywords": ["microframework", "rest", "router", "psr7"],
-    "homepage": "http://github.com/slimphp/Slim-Skeleton",
+    "name": "Ouroboros Account Portal",
+    "description": "An account portal for the Ouroboros Project.",
+    "keywords": ["city of heroes", "ouroboros", "issue 24", "issue 25"],
+    "homepage": "https://github.com/auroris/City-of-Heroes-Account-Portal",
     "license": "MIT",
     "authors": [
         {
-            "name": "Josh Lockhart",
-            "email": "info@joshlockhart.com",
-            "homepage": "http://www.joshlockhart.com/"
+            "name": "auroris",
         }
     ],
     "require": {
