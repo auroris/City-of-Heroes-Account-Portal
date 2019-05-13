@@ -89,8 +89,8 @@ class FederationController
 
             // Apply the ForceDefaultMap policy
             if (isset($fedServer['Policy']['ForceDefaultMap']) && false !== $fedServer['Policy']['ForceDefaultMap']) {
-                // See https://git.ourodev.com/CoX/Source/src/branch/develop/dbserver/clientcomm.c#L1300-L1310 for mapid's
-                $character->StaticMapId = 1;
+                // See https://git.ourodev.com/CoX/Source/src/branch/develop/dbserver/clientcomm.c#L1300-L1310 for starting mapid's
+                $character->StaticMapId = 83; // Pocket D
                 unset($character->MapId);
                 unset($character->PosX);
                 unset($character->PosY);
