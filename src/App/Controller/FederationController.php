@@ -91,9 +91,9 @@ class FederationController
 
             $character->PutCharacter();
 
-            return $this->container->get('renderer')->render($response, 'page-generic-message.phtml', ['title' => 'Welcome to '.getenv('portal_name'), 'message' => $character->Name.' has been transferred successfully!']);
+            return $this->container->get('renderer')->render($HttpResponse, 'page-generic-message.phtml', ['title' => 'Welcome to '.getenv('portal_name'), 'message' => $character->Name.' has been transferred successfully!']);
         } catch (Exception $e) {
-            return $this->container->get('renderer')->render($response, 'page-generic-message.phtml', ['title' => 'An Error was encountered', 'message' => $e->GetMessage()]);
+            return $this->container->get('renderer')->render($HttpResponse, 'page-generic-message.phtml', ['title' => 'An Error was encountered', 'message' => $e->GetMessage()]);
         }
     }
 
