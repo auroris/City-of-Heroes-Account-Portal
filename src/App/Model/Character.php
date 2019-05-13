@@ -64,8 +64,13 @@ class Character
                 }
             }
 
+            $val = explode(' ', $result, 2);
+            if (false === $val || 2 != count($val)) {
+                continue;
+            }
+
             // explode at first space, and assign to vars
-            list($key, $value) = explode(' ', $result, 2);
+            list($key, $value) = $val;
 
             // This might have an underlining issue, We need to double check it doesn't cause an issue. The exec returns Strings wrapped in ""
             $value = str_replace('"', '', $value);
