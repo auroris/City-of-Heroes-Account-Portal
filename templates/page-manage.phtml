@@ -34,7 +34,7 @@
     <div class="blockbody">
         <ul>
             {% for character in characters %}
-                <li><a href="./api/character/{{character.datauri}}/raw">{{character.Name}}</a></li>
+                <li><a href="./api/character/raw?q={{character.datauri}}">{{character.Name}}</a></li>
             {% endfor %}
         </ul>
     </div>

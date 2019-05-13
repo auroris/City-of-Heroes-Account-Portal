@@ -7,7 +7,6 @@ use Slim\Http\Request;
 use Slim\Http\Response;
 use App\Model\Character;
 use App\Util\DataHandling;
-use Exception;
 
 class APIController
 {
@@ -21,7 +20,7 @@ class APIController
 
     public function GetCharacter(Request $request, Response $response, array $args)
     {
-        $character = new Character(DataHandling::Decrypt($args['encrypted_name'], getenv('portal_key'), getenv('portal_iv')));
+        $character = new Character(DataHandling::Decrypt($_GET['q'], getenv('portal_key'), getenv('portal_iv')));
         if (isset($args['type']) && 'json' == $args['type']) {
             $newResponse = $response->withHeader('Content-type', 'application/json');
 
@@ -43,7 +42,7 @@ class APIController
     public function ListCharacters(Request $request, Response $response, array $args)
     {
         $newResponse = $response->withHeader('Content-type', 'application/json');
-        $account = new GameAccount(DataHandling::Decrypt($args['encrypted_name'], getenv('portal_key'), getenv('portal_iv')));
+        $account = new GameAccount(DataHandling::Decrypt($_GET['q'], getenv('portal_key'), getenv('portal_iv')));
 
         return $newResponse->write($account->GetCharacterList());
     }

@@ -56,7 +56,7 @@ class FederationController
     public function PullCharacter(Request $HttpRequest, Response $HttpResponse, array $HttpArgs)
     {
         $fedServer = $this->FindFederationServerByName($_SESSION['pullcharacter']['from']);
-        $rawData = Http::Get($fedServer['Url'].'/api/character/'.$_SESSION['pullcharacter']['character'].'/raw');
+        $rawData = Http::Get($fedServer['Url'].'/api/character/raw?q='.$_SESSION['pullcharacter']['character']);
         $character = new Character();
         $character->SetArray(explode("\n", $rawData));
 

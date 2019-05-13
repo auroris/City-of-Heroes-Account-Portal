@@ -25,11 +25,11 @@ return function (App $app) {
     })->add($container->get('csrf'));
 
     $app->group('/api', function (App $app) {
-        $app->get('/character/{encrypted_name}/[{type}]', APIController::class.':GetCharacter');
+        $app->get('/character/{type}', APIController::class.':GetCharacter');
         $app->delete('/character/{id}', APIController::class.':DeleteCharacter');
 
         $app->post('/account', APIController::class.':CreateOrUpdateAccount');
-        $app->get('/account/character-list/{encrypted_name}', APIController::class.':ListCharacters');
+        $app->get('/account/character-list', APIController::class.':ListCharacters');
     });
 
     $app->group('/federation', function (App $app) {
