@@ -50,13 +50,17 @@ class FederationController
             $_SESSION['nextpage'] = 'federation/pull-character';
             $_SESSION['pullcharacter'] = ['character' => $message->character, 'from' => $message->from];
 
-            return $HttpResponse->withRedirect('../login');
+            return $HttpResponse->withRedirect(getenv('portal_url').'login');
         }
     }
 
     public function PullCharacter(Request $HttpRequest, Response $HttpResponse, array $HttpArgs)
     {
         try {
+            if (!isset($_SESSION['pullcharacter']) || !isset($_SESSION['account'])) {
+                throw new Exception('Your session is not correct or has expired.');
+            }
+
             $fedServer = $this->FindFederationServerByName($_SESSION['pullcharacter']['from']);
             $rawData = Http::Get($fedServer['Url'].'/api/character/raw?q='.$_SESSION['pullcharacter']['character']);
             $character = new Character();

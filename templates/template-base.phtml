@@ -2,10 +2,10 @@
 <html>
 <head>
     <title>{% block title %}{% endblock %}</title>
-    <link href="style.css" rel="stylesheet" type="text/css" />
+    <link href="{{portal_url}}style.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
-<div id="logo"><img src="ouroborosLogo.png" width="409"></div>
+<div id="logo"><img src="{{portal_url}}ouroborosLogo.png" width="409"></div>
 <div id="content">
 
     <table>
@@ -13,18 +13,18 @@
             <td valign="top">
                 <div class="nav">
                     {% macro menuMacro(menu, level) -%}
-                    
+
                       {# Set our default level as an integer. #}
                       {% set default_level = 1 %}
-                      
+
                       <ul class="menu-level--{{ level|default(default_level) }}">
                         {% for menu_item in menu %}
                           {# Check if this is the active item. #}
                           {% set active = (menu_item.active) ? ' is-active' : '' %}
-                    
+
                           {# Check if this item is in the active trail. #}
                           {% set active = active ~ ((menu_item.active_trail) ? ' is-active-trail' : '') %}
-                    
+
                           <li class="menu__item{{ active }}">
                             <a href="{{ menu_item.url }}"  class="menu__link{{ active }} navitem">{{ menu_item.text }}</a>
                             {% if menu_item.submenu %}
@@ -35,11 +35,11 @@
                         {% endfor %}
                       </ul>
                     {%- endmacro %}
-                    
+
                     {% import _self as menu %}
                     {{ menu.menuMacro(menu_tree) }}
                 </div>
-                
+
                 <br />
                 <div class="littleblock">
                     <div class="blocktitle">

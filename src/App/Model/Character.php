@@ -26,10 +26,11 @@ class Character
                 exec($cmd, $this->results, $ret);
 
                 if (0 != $ret) {
-                    throw new Exception('Calling '.$cmd.' failed with a return code of '.$ret.'. Returned info: '.print_r($this->results));
+                    throw new Exception('Calling '.$cmd.' failed with a return code of '.$ret.'. Returned info: '.print_r($this->results, true));
                 }
 
                 $this->ParseResults();
+                $this->BlacklistEntries();
             } else {
                 throw new Exception('No such character "'.$name.'"');
             }
@@ -40,6 +41,12 @@ class Character
     {
         $this->results = $res;
         $this->ParseResults();
+    }
+
+    // Some fields should just not be included in exports
+    private function BlacklistEntries()
+    {
+        unset($this->attributes['Ents2'][0]['AuthUserDataEx']);
     }
 
     private function ParseResults()
@@ -120,7 +127,7 @@ class Character
 
         if (0 != $ret) {
             fclose($file);
-            throw new Exception('Calling '.$cmd.' failed with a return code of '.$ret.'. Returned info: '.print_r($this->results));
+            throw new Exception('Calling '.$cmd.' failed with a return code of '.$ret.'. Returned info:<br>'.implode('<br>', $this->results));
         }
     }
 

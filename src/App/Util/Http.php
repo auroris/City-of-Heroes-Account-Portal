@@ -13,7 +13,7 @@ class Http
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         $response = curl_exec($ch);
         if (200 !== curl_getinfo($ch, CURLINFO_HTTP_CODE)) {
-            throw new Exception('An error was encountered when attempting to retrieve '.$url.curl_error($ch));
+            throw new Exception('An error was encountered when attempting to retrieve '.$url.'<br>'.print_r($response, true));
         }
         curl_close($ch);
 
