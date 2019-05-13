@@ -9,6 +9,7 @@ use App\Model\GameAccount;
 use App\Messages\Message;
 use App\Util\Http;
 use App\Model\Character;
+use Exception;
 
 class FederationController
 {
