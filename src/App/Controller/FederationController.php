@@ -80,11 +80,22 @@ class FederationController
                 $character->InfluencePoints = $fedServer['Policy']['ForceInfluence'];
             }
 
-            // Apply rhe ForceAccessLevel policy
+            // Apply the ForceAccessLevel policy
             if (isset($fedServer['Policy']['ForceAccessLevel']) && false !== $fedServer['Policy']['ForceAccessLevel']) {
                 if (isset($character->AccessLevel)) { //AccessLevel is not currently specified in our exports, so it defaults to null right now
                     $character->AccessLevel = $fedServer['Policy']['ForceAccessLevel'];
                 }
+            }
+
+            // Apply the ForceDefaultMap policy
+            if (isset($fedServer['Policy']['ForceDefaultMap']) && false !== $fedServer['Policy']['ForceDefaultMap']) {
+                // See https://git.ourodev.com/CoX/Source/src/branch/develop/dbserver/clientcomm.c#L1300-L1310 for mapid's
+                $character->StaticMapId = 1;
+                unset($character->MapId);
+                unset($character->PosX);
+                unset($character->PosY);
+                unset($character->PosZ);
+                unset($character->OrientY);
             }
 
             // Apply the AllowInventory policy

@@ -11,6 +11,7 @@ $GLOBALS['federation'] = [
             'ForceInfluence' => 0, // 0 (or any number) to force inf to that number; false to disable and allow whatever the character has
             'ForceAccessLevel' => 0, // 0 (or any number) to force access level to that number; false to disable and allow whatever the character has
             'AllowInventory' => false, // false to delete the inventory, true to allow whatever the character has
+            'ForceDefaultMap' => false, // false to allow user to be on whatever map they were on when they transferred; true to force them to Atlas Park, Mercy Island or Nova Praetoria, depending on their current alignment
         ],
         'Crypto' => [ // Crypto keys used for any federation member who wants to send a message to us
             'key' => 'AuroraKey',
@@ -25,6 +26,7 @@ $GLOBALS['federation'] = [
             'ForceInfluence' => false, // Allow inf to carry over
             'ForceAccessLevel' => 0, // GM's from Rebirth aren't allowed to be GM's here
             'AllowInventory' => true, // Allow inventory to carry over
+            'ForceDefaultMap' => false,
         ],
         'Crypto' => [
             'key' => 'RebirthKey',
