@@ -55,34 +55,45 @@ class FederationController
 
     public function PullCharacter(Request $HttpRequest, Response $HttpResponse, array $HttpArgs)
     {
-        $fedServer = $this->FindFederationServerByName($_SESSION['pullcharacter']['from']);
-        $rawData = Http::Get($fedServer['Url'].'/api/character/raw?q='.$_SESSION['pullcharacter']['character']);
-        $character = new Character();
-        $character->SetArray(explode("\n", $rawData));
+        try {
+            $fedServer = $this->FindFederationServerByName($_SESSION['pullcharacter']['from']);
+            $rawData = Http::Get($fedServer['Url'].'/api/character/raw?q='.$_SESSION['pullcharacter']['character']);
+            $character = new Character();
+            $character->SetArray(explode("\n", $rawData));
 
-        // Apply to the correct account
-        $character->AuthId = $_SESSION['account']->GetUID();
-        $character->AuthName = $_SESSION['account']->GetUsername();
+            // Apply to the correct account
+            $character->AuthId = $_SESSION['account']->GetUID();
+            $character->AuthName = $_SESSION['account']->GetUsername();
 
-        // Apply the ForceInfluence policy
-        if (isset($fedServer['Policy']['ForceInfluence']) && false !== $fedServer['Policy']['ForceInfluence']) {
-            $character->InfluencePoints = $fedServer['Policy']['ForceInfluence'];
-        }
-
-        // Apply rhe ForceAccessLevel policy
-        if (isset($fedServer['Policy']['ForceAccessLevel']) && false !== $fedServer['Policy']['ForceAccessLevel']) {
-            if (isset($character->AccessLevel)) { //AccessLevel is not currently specified in our exports, so it defaults to null right now
-                $character->AccessLevel = $fedServer['Policy']['ForceAccessLevel'];
+            // Apply the AllowTransfers policy
+            if (isset($fedServer['Policy']['AllowTransfers']) && false === $fedServer['Policy']['AllowTransfers']) {
+                throw new Exception('Character transfer failed: Policy on this system forbids characters originating on '.$fedServer['Name']);
             }
-        }
 
-        // Apply the AllowInventory policy
-        if (isset($fedServer['Policy']['AllowInventory']) && false === $fedServer['Policy']['AllowInventory']) {
-            unset($character->InvSalvage0);
-            unset($character->InvRecipeInvention);
-        }
+            // Apply the ForceInfluence policy
+            if (isset($fedServer['Policy']['ForceInfluence']) && false !== $fedServer['Policy']['ForceInfluence']) {
+                $character->InfluencePoints = $fedServer['Policy']['ForceInfluence'];
+            }
 
-        $character->PutCharacter();
+            // Apply rhe ForceAccessLevel policy
+            if (isset($fedServer['Policy']['ForceAccessLevel']) && false !== $fedServer['Policy']['ForceAccessLevel']) {
+                if (isset($character->AccessLevel)) { //AccessLevel is not currently specified in our exports, so it defaults to null right now
+                    $character->AccessLevel = $fedServer['Policy']['ForceAccessLevel'];
+                }
+            }
+
+            // Apply the AllowInventory policy
+            if (isset($fedServer['Policy']['AllowInventory']) && false === $fedServer['Policy']['AllowInventory']) {
+                unset($character->InvSalvage0);
+                unset($character->InvRecipeInvention);
+            }
+
+            $character->PutCharacter();
+
+            return $this->container->get('renderer')->render($response, 'page-generic-message.phtml', ['title' => 'Welcome to '.getenv('portal_name'), 'message' => $character->Name.' has been transferred successfully!']);
+        } catch (Exception $e) {
+            return $this->container->get('renderer')->render($response, 'page-generic-message.phtml', ['title' => 'An Error was encountered', 'message' => $e->GetMessage()]);
+        }
     }
 
     // Find a federation server by its name.
@@ -93,5 +104,7 @@ class FederationController
                 return $item;
             }
         }
+
+        throw new Exception('Unable to locate federated server by name: '.$name.'. Please ensure that /src/Config/federation.php has an entry for '.$name.'.');
     }
 }

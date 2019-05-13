@@ -49,15 +49,17 @@
             <p>Please select a server and character to transfer:</p>
             <label for="server">Server</label>
             <select name="server">
-                {% for server in federation %}
-                    <option value="{{server.Name}}">{{server.Name}}</option>
+                {% for Server in federation %}
+                    {% if Server.Policy.AllowTransfers == true  %}
+                        <option value="{{server.Name}}">{{Server.Name}}</option>
+                    {% endif %}
                 {% endfor %}
             </select>
             <br />
             <label for="character">Character</label>
             <select name="character">
-            {% for character in characters %}
-                <option value="{{character.datauri}}">{{character.Name}}</option>
+            {% for Character in characters %}
+                <option value="{{Character.datauri}}">{{Character.Name}}</option>
             {% endfor %}
             </select>
             <br />

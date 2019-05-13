@@ -116,55 +116,12 @@ class Character
 
         $cmd = getenv('dbquery').' -putcharacter < '.$path.' 2>&1';
 
-        //echo $charfile;
-
         exec($cmd, $output, $ret);
 
-        fclose($file);
-
-        die("\n-----\n".print_r($output, true));
-        //die();
-
-        /*$descriptorspec = array(
-            0 => array('pipe', 'r'),  // stdin is a pipe the child will read from
-            1 => array('pipe', 'w'),  // stdout is a pipe the child will write to
-            2 => array('pipe', 'w'),  // stderr is a pipe the child will write to
-        );
-
-        $process = proc_open($cmd, $descriptorspec, $pipes);
-
-        if (is_resource($process)) {
-            $this->Reconstruct();
-
-            stream_set_blocking($pipes[0], false);
-            stream_set_blocking($pipes[1], false);
-            stream_set_blocking($pipes[2], false);
-
-            $except = null;
-            $read = [$pipes[0]];
-            $write = [$pipes[1], $pipes[2]];
-
-            if (false === ($num_changed_streams = stream_select($read, $write, $except, 1))) {
-            } elseif ($num_changed_streams > 0) {
-                fwrite($pipes[0], implode("\n", $this->constructed));
-                fclose($pipes[0]);
-
-                echo stream_get_contents($pipes[1]);
-                fclose($pipes[1]);
-
-                echo stream_get_contents($pipes[2]);
-                fclose($pipes[2]);
-            }
-
-            $ret = proc_close($process);
-
-            die($ret);
-            if (0 != $ret) {
-                throw new Exception('Program threw an error when it ended.');
-            }
-        } else {
-            throw new Exception('Error in opening command.');
-        }*/
+        if (0 != $ret) {
+            fclose($file);
+            throw new Exception('Calling '.$cmd.' failed with a return code of '.$ret.'. Returned info: '.print_r($this->results));
+        }
     }
 
     public function ToJSON()
