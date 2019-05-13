@@ -35,4 +35,4 @@ Website content can be found in the `\templates` directory. You will need to cus
 
 # Support
 
-Support is available from Aleena on Discord. https://discord.gg/KEsXYvD in the #account-portal-support channel.
+Support is available from Aleena on Discord. https://discord.gg/G5tRFFX in the #portal-discussion channel.
