@@ -5,11 +5,11 @@
 {% block content %}
 <div class="block">
     <div class="blocktitle">
-        About this server
+        Welcome to {{portal_name}}!
     </div>
     <div class="blockbody">
         <p>This City of Heroes private server was created for friends to play together in a fun atmosphere.</p>
-       
+
         {% if status.status == 'Online'  %}
             <p>Server started on {{status.started}}, running for {{status.uptime}}</p>
         {% else %}

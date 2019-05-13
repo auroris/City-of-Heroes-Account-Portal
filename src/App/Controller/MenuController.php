@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Controller;
+
 use App\Model\CoHStats;
 
 class MenuController
@@ -10,16 +11,14 @@ class MenuController
     public function __construct()
     {
         array_push($this->menu, new \App\Model\MenuItem('Home', './'));
-        
-        if (!isset($_SESSION['account']))
-        {
+
+        if (!isset($_SESSION['account'])) {
             array_push($this->menu, new \App\Model\MenuItem('Create Account', 'create'));
         }
 
         array_push($this->menu, new \App\Model\MenuItem('My Account', 'manage'));
-        
-        if (isset($_SESSION['account']))
-        {
+
+        if (isset($_SESSION['account'])) {
             array_push($this->menu, new \App\Model\MenuItem('Logout', 'logout'));
         }
     }
@@ -35,7 +34,8 @@ class MenuController
             array_push($result, $item->GetMenu());
         }
 
-        return ['menu_tree' => $result,
-                'online' => $gameStats->GetOnline()];
+        return ['portal_name' => getenv('portal_name'),
+                'menu_tree' => $result,
+                'online' => $gameStats->GetOnline(), ];
     }
 }
