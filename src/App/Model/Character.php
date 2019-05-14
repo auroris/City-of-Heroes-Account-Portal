@@ -136,6 +136,50 @@ class Character
         }
     }
 
+    public function GetAlignment()
+    {
+        $PlayerType = 0;
+        $PlayerSubType = 0;
+        $PlayerPraetorian = 0;
+
+        if (isset($this->attributes['PlayerType'])) {
+            $PlayerType = $this->attributes['PlayerType'];
+        }
+        if (isset($this->attributes['PlayerSubType'])) {
+            $PlayerSubType = $this->attributes['PlayerSubType'];
+        }
+        if (isset($this->attributes['Ents2'][0]['PraetorianProgress'])) {
+            $playerPraetorian = $this->attributes['Ents2'][0]['PraetorianProgress'];
+        }
+
+        if ($PlayerPraetorian < 3 && $PlayerPraetorian > 0 && 0 == $PlayerType) {
+            return 'Resistance';
+        }
+        if ($PlayerPraetorian < 3 && $PlayerPraetorian > 0 && 1 == $PlayerType) {
+            return 'Loyalist';
+        }
+        if (0 == $PlayerType && 0 == $PlayerSubType) {
+            return 'Hero';
+        }
+        if (0 == $PlayerType && 1 == $PlayerSubType) {
+            return 'Paragon';
+        }
+        if (0 == $PlayerType && 2 == $PlayerSubType) {
+            return 'Vigilante';
+        }
+        if (1 == $PlayerType && 0 == $PlayerSubType) {
+            return 'Villain';
+        }
+        if (1 == $PlayerType && 1 == $PlayerSubType) {
+            return 'Tyrant';
+        }
+        if (1 == $PlayerType && 2 == $PlayerSubType) {
+            return 'Rogue';
+        }
+
+        return 'Unkonwn';
+    }
+
     public function ToJSON()
     {
         return json_encode($this->attributes, JSON_THROW_ON_ERROR);
