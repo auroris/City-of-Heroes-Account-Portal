@@ -1,0 +1,52 @@
+{% for character in characters %}
+    <li><a href="./api/character/raw?q={{character.datauri}}">{{character.Name}}</a>
+
+    {% set PlayerType, PlayerSubType, PlayerPraetorian, PlayerAlignment = 0, 0, 0, 'Unknown' %}
+
+    {% if character.PlayerType is defined                        %}
+    {%    set PlayerType = character.PlayerType                  %}
+    {% endif                                                     %}
+
+    {% if character.PlayerSubType is defined                     %}
+    {%    set PlayerSubType = character.PlayerSubType            %}
+    {% endif                                                     %}
+
+    {% if character.PraetorianProgress is defined                %}
+    {%    set PlayerPraetorian = character.PraetorianProgress    %}
+    {% endif                                                     %}
+
+    {% if PlayerPraetorian < 3 and PlayerPraetorian > 0          %}
+        {% if PlayerType == 0  %}
+            Praetorian Resistance
+        {% endif %}
+
+        {% if PlayerType == 1 %}
+            Praetorian Loyalist
+        {% endif %}
+    {% else                                                      %}
+        {% if PlayerType == 0 and PlayerSubType == 0 %}
+            Hero
+        {% endif %}
+
+        {% if PlayerType == 0 and PlayerSubType == 1 %}
+            Paragon
+        {% endif %}
+
+        {% if PlayerType == 0 and PlayerSubType == 2 %}
+            Vigilante
+        {% endif %}
+
+        {% if PlayerType == 1 and PlayerSubType == 0 %}
+            Villain
+        {% endif %}
+
+        {% if PlayerType == 1 and PlayerSubType == 1 %}
+            Tyrant
+        {% endif %}
+
+        {% if PlayerType == 1 and PlayerSubType == 2 %}
+            Rogue
+        {% endif %}
+    {% endif                                                     %}
+    </li>
+{% endfor %}

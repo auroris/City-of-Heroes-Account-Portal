@@ -132,7 +132,7 @@ class GameAccount
         $this->wakeup();
 
         $characters = array();
-        $qCharacters = $this->sql->FetchAssoc('select * FROM cohdb.dbo.ents WHERE authname = ?', array($this->username));
+        $qCharacters = $this->sql->FetchAssoc('SELECT Ents.*, Ents2.* FROM cohdb.dbo.Ents INNER JOIN cohdb.dbo.Ents2 ON Ents.ContainerId = Ents2.ContainerId WHERE (Ents.AuthName = ?)', array($this->username));
         foreach ($qCharacters as $row) {
             $row['datauri'] = urlencode(DataHandling::Encrypt($row['Name'], getenv('portal_key'), getenv('portal_iv')));
             array_push($characters, $row);

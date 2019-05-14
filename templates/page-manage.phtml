@@ -33,9 +33,7 @@
     </div>
     <div class="blockbody">
         <ul>
-            {% for character in characters %}
-                <li><a href="./api/character/raw?q={{character.datauri}}">{{character.Name}}</a> ( {{ character.GetAlignment() }} )</li>
-            {% endfor %}
+            {{ include('block-character-list.phtml') }}
         </ul>
     </div>
 </div>
