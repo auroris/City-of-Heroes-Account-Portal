@@ -31,19 +31,11 @@ class APIController
         return $newResponse->write(implode("\n", $character->ToArray()));
     }
 
-    public function DeleteCharacter(Request $request, Response $response, array $args)
+    public function GetServerStats(Request $request, Response $response, array $args)
     {
-    }
-
-    public function CreateOrUpdateAccount(Request $request, Response $response, array $args)
-    {
-    }
-
-    public function ListCharacters(Request $request, Response $response, array $args)
-    {
-        $newResponse = $response->withHeader('Content-type', 'application/json');
-        $account = new GameAccount(DataHandling::Decrypt($_GET['q'], getenv('portal_key'), getenv('portal_iv')));
-
-        return $newResponse->write($account->GetCharacterList());
+        if (isset($args['type']) && 'json' == $args['type']) {
+        } elseif (isset($args['xml']) && 'json' == $args['type']) {
+        } else {
+        }
     }
 }

@@ -25,11 +25,28 @@ return function (App $app) {
     })->add($container->get('csrf'));
 
     $app->group('/api', function (App $app) {
-        $app->get('/character/{type}', APIController::class.':GetCharacter');
-        $app->delete('/character/{id}', APIController::class.':DeleteCharacter');
+        // CORS headers
+        $app->options('/{routes:.+}', function ($request, $response, $args) {
+            return $response;
+        });
+        $app->add(function ($req, $res, $next) {
+            $response = $next($req, $res);
 
-        $app->post('/account', APIController::class.':CreateOrUpdateAccount');
-        $app->get('/account/character-list', APIController::class.':ListCharacters');
+            return $response
+                    ->withHeader('Access-Control-Allow-Origin', '*')
+                    ->withHeader('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Accept, Origin, Authorization')
+                    ->withHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
+        });
+
+        $app->get('/character/{type}', APIController::class.':GetCharacter');
+        $app->get('/stats/{type}', APIController::class.':GetServerStats');
+
+        // 404'd if anything else
+        $app->map(['GET', 'POST', 'PUT', 'DELETE', 'PATCH'], '/{routes:.+}', function ($req, $res) {
+            $handler = $this->notFoundHandler;
+
+            return $handler($req, $res);
+        });
     });
 
     $app->group('/federation', function (App $app) {
