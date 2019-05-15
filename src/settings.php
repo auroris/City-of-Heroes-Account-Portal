@@ -3,7 +3,7 @@
 // The web portal's configuration
 $dotenv = Dotenv\Dotenv::create(__DIR__, 'Config/config.env');
 $dotenv->load();
-$dotenv->required(['db_server', 'db_databas', 'db_username', 'db_password', 'dbquery',
+$dotenv->required(['db_server', 'db_databass', 'db_username', 'db_password', 'dbquery',
                     'portal_name', 'portal_url', 'portal_key', 'portal_iv', ]);
 
 // The Federation's configuration
