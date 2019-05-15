@@ -44,7 +44,6 @@ a:hover {
   text-transform: uppercase;
   line-height: 1.5;
   padding-left: 11px;
-  background: transparent url('data:image/gif;base64,R0lGODlhAQAkANUAACButlN1mRU5YBc7YhM2XTZzqyhPeiRvtB1CayRLdRtAaUR1pSFvtSpRfEB1pixxsBo+Zxg9ZB9FbjpzqhQ4Xkx1nylwsixTflB1nCBHcEd1ozNyrSZNeCZwsz10qC9xr0p1oSJJc051nlJ1mwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACH5BAAAAAAALAAAAAABACQAAAYiQADj0LE8PpvCxONYaEAVEWYUuDQMnEQoI0EoIJGBgEIIAgA7') repeat-x scroll 0 0;
 }
 
 .block>.blocktitle {
@@ -60,6 +59,39 @@ a:hover {
 
 div.blockbody label {
   margin-right: 8px;
+}
+
+.blocktitle,
+.character li {
+  background: transparent url('data:image/gif;base64,R0lGODlhAQAkANUAACButlN1mRU5YBc7YhM2XTZzqyhPeiRvtB1CayRLdRtAaUR1pSFvtSpRfEB1pixxsBo+Zxg9ZB9FbjpzqhQ4Xkx1nylwsixTflB1nCBHcEd1ozNyrSZNeCZwsz10qC9xr0p1oSJJc051nlJ1mwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACH5BAAAAAAALAAAAAABACQAAAYiQADj0LE8PpvCxONYaEAVEWYUuDQMnEQoI0EoIJGBgEIIAgA7') repeat-x scroll 0 0;
+}
+
+.character li {
+  border-radius: 25px;
+  border: 2px solid blue;
+  margin-bottom: 4px;
+}
+
+.character a {
+  color: #fff;
+  margin-left: 5px;
+  font-size: 16px;
+  line-height: 32px;
+  display: inline-block;
+  width: 350px;
+}
+
+.character {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  display: block;
+}
+
+.character img {
+  width: 32px;
+  height: 32px;
+  vertical-align: middle;
 }
 
 .xdebug-error {

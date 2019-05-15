@@ -27,10 +27,9 @@ extension=php_pdo_sqlsrv_73_ts_x64
 
 # Customization
 
-Website content can be found in the `\templates` directory. You will need to customize 
+Website content can be found in the `\templates` directory. You will need to customize
 
 * `page-index.phtml`
-* `template-menu.phtml` and
 * `block-client-download.phtml`
 
 # Support
