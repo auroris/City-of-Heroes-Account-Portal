@@ -76,11 +76,11 @@
 
     {#### Origin #####}
 
-    {% if character.Origin == 'science' %}<img src="{{portal_url}}images/icons/origin/science.png" alt="Science">{% endif %}
-    {% if character.Origin == 'mutation' %}<img src="{{portal_url}}images/icons/origin/mutation.png" alt="Mutation">{% endif %}
-    {% if character.Origin == 'magic' %}<img src="{{portal_url}}images/icons/origin/magic.png" alt="Magic">{% endif %}
-    {% if character.Origin == 'technology' %}<img src="{{portal_url}}images/icons/origin/technology.png" alt="Technology">{% endif %}
-    {% if character.Origin == 'natural' %}<img src="{{portal_url}}images/icons/origin/natural.png" alt="Natural">{% endif %}
+    {% if character.OriginName == 'science' %}<img src="{{portal_url}}images/icons/origin/science.png" alt="Science">{% endif %}
+    {% if character.OriginName == 'mutation' %}<img src="{{portal_url}}images/icons/origin/mutation.png" alt="Mutation">{% endif %}
+    {% if character.OriginName == 'magic' %}<img src="{{portal_url}}images/icons/origin/magic.png" alt="Magic">{% endif %}
+    {% if character.OriginName == 'technology' %}<img src="{{portal_url}}images/icons/origin/technology.png" alt="Technology">{% endif %}
+    {% if character.OriginName == 'natural' %}<img src="{{portal_url}}images/icons/origin/natural.png" alt="Natural">{% endif %}
 
     <a href="./api/character/raw?q={{character.datauri}}">{{character.Name}}</a>
 
