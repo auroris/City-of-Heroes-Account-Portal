@@ -28,7 +28,6 @@ class SunriseController
         return $this->container->get('renderer')->render($newResponse, 'sunrise\sunrise.xml',
         [
             'portal_name' => getenv('portal_name'),
-            'portal_id' => strtolower(implode('.', array_reverse(explode('.', parse_url(getenv('portal_url'), PHP_URL_HOST)))) .'.' . preg_replace("/[^a-z0-9.]+/i", "", getenv('portal_name'))),
         ]);
     }
 
@@ -42,7 +41,7 @@ class SunriseController
 
         // TODO: Authserver check
         $authServer .= '<server type="auth">';
-        $authServer .= '<available value="true" last-available="' . strftime('%Y-%m-%dT%H:%M:%SZ') .'" />';
+        $authServer .= '<available value="true" />';
         $authServer .= '</server>';
 
         $qServer = $this->sql->FetchAssoc('SELECT name, inner_ip FROM cohauth.dbo.server');
@@ -70,7 +69,6 @@ class SunriseController
         return $this->container->get('renderer')->render($newResponse, 'sunrise\uptime.xml',
         [
             'portal_name' => getenv('portal_name'),
-            'portal_id' => strtolower(implode('.', array_reverse(explode('.', parse_url(getenv('portal_url'), PHP_URL_HOST)))) .'.' . preg_replace("/[^a-z0-9.]+/i", "", getenv('portal_name'))),
             'zulu_time' => strftime('%Y-%m-%dT%H:%M:%SZ'),
             'auth_server' => $authServer,
             'game_server' => $gameServer,

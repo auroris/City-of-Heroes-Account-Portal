@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
-<sunrise-manifest version="1.0" game="{{portal_id}}">
+<sunrise-manifest version="1.0" game="com.coh">
     <name>{{portal_name}}</name>
 
     <servers>
