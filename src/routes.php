@@ -5,6 +5,7 @@ use App\Controller\StaticController;
 use App\Controller\GameAccountController;
 use App\Controller\FederationController;
 use App\Controller\APIController;
+use App\Controller\SunriseController;
 use App\Util\MonoLogger;
 
 return function (App $app) {
@@ -39,7 +40,8 @@ return function (App $app) {
         });
 
         $app->get('/character/{type}', APIController::class.':GetCharacter');
-        $app->get('/stats/{type}', APIController::class.':GetServerStats');
+        $app->get('/sunrise/manifest', SunriseController::class.':Manifest');
+        $app->get('/sunrise/uptime', SunriseController::class.':Uptime');
 
         // 404'd if anything else
         $app->map(['GET', 'POST', 'PUT', 'DELETE', 'PATCH'], '/{routes:.+}', function ($req, $res) {

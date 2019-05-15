@@ -3,8 +3,8 @@
 namespace App\Controller;
 
 use Psr\Container\ContainerInterface;
-use  Slim\Http\Request;
-use  Slim\Http\Response;
+use Slim\Http\Request;
+use Slim\Http\Response;
 
 class StaticController
 {
@@ -23,7 +23,7 @@ class StaticController
         return $this->container->get('renderer')->render($response, 'page-index.phtml', [
             'accounts' => $gameStats->CountAccounts(),
             'characters' => $gameStats->CountCharacters(),
-            'status' => $gameStats->GetServerStatus()
+            'status' => $gameStats->GetServerStatus(),
         ]);
     }
 
@@ -46,7 +46,6 @@ class StaticController
             ['username' => $_SESSION['account']->GetUsername(),
             'characters' => $_SESSION['account']->GetCharacterList(),
             'federation' => $GLOBALS['federation'],
-            'host' => $_SERVER['HTTP_HOST'],
             ]
         );
     }

@@ -30,12 +30,4 @@ class APIController
 
         return $newResponse->write(implode("\n", $character->ToArray()));
     }
-
-    public function GetServerStats(Request $request, Response $response, array $args)
-    {
-        if (isset($args['type']) && 'json' == $args['type']) {
-        } elseif (isset($args['xml']) && 'json' == $args['type']) {
-        } else {
-        }
-    }
 }

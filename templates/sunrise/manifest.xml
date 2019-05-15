@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<sunrise-manifest version="1.0" game="{{portal_id}}">
+    <name>{{portal_name}}</name>
+
+    <servers>
+        <!-- Server blocks go here -->
+    </servers>
+
+    <applications>
+        <!-- Application blocks go here -->
+    </applications>
+
+    <runtimes>
+        <!-- Runtime blocks go here -->
+    </runtimes>
+</sunrise-manifest>

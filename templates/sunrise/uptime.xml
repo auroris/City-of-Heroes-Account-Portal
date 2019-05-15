@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<sunrise-manifest version="1.0" game="{{portal_id}}">
+    <name>{{portal_name}}</name>
+    <updated>{{zulu_time}}</updated>
+
+    <servers>
+        <!-- Server blocks go here -->
+        {{auth_server|raw}} {{game_server|raw}}
+    </servers>
+</sunrise-manifest>
