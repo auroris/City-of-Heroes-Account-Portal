@@ -63,8 +63,8 @@ class GameAccount
         }
 
         // Generate a new account ID and password hash
-        $qNewAccountUID = $this->sql->FetchNumeric('SELECT max(uid) FROM cohauth.dbo.user_account');
-        $uid = $qNewAccountUID[0][0] + 1;
+        $qNewAccountUID = $this->sql->FetchNumeric('SELECT max(uid) + 1 FROM cohauth.dbo.user_account');
+        $uid = $qNewAccountUID[0][0];
         $hash = DataHandling::BinPassword($username, $password);
 
         // SQL statements to execute

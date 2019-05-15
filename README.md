@@ -25,7 +25,11 @@ extension=php_pdo_sqlsrv_73_ts_x64
 
 * Configuration is stored in \App\Config. Rename config.env.example to config.env and put in your database credentials, your command to start dbquery, and your portal's name and crypto keys. Just put some random typing as your key and iv values.
 
+# Recommendations
+
 * I recommend you set up HTTPS on your Apache server. I use Win-Acme (https://github.com/PKISharp/win-acme), an Acme client for Let's Encrypt. The instructions for Apache are https://github.com/PKISharp/win-acme/wiki/Apache-2.4-basic-usage.
+
+* Add a unique index to column uid on cohauth.dbo.user_account to reduce the possibility of account uid collisions. To do that, run this SQL statement: ```CREATE UNIQUE INDEX AccountUID ON cohauth.dbo.user_account (uid);```
 
 # Customization
 
