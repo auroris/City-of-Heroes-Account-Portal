@@ -58,29 +58,29 @@
 
     {#### Class #####}
 
-    {% if character.Class == 1 %}<img src="{{portal_url}}images/icons/archetype/blaster.png" alt="Blaster">{% endif %}
-    {% if character.Class == 2 %}<img src="{{portal_url}}images/icons/archetype/controller.png" alt="Controller">{% endif %}
-    {% if character.Class == 3 %}<img src="{{portal_url}}images/icons/archetype/defender.png" alt="Defender">{% endif %}
-    {% if character.Class == 4 %}<img src="{{portal_url}}images/icons/archetype/scrapper.png" alt="Scrapper">{% endif %}
-    {% if character.Class == 5 %}<img src="{{portal_url}}images/icons/archetype/tanker.png" alt="Tanker">{% endif %}
-    {% if character.Class == 9198 %}<img src="{{portal_url}}images/icons/archetype/mastermind.png" alt="Mastermind">{% endif %}
-    {% if character.Class == 9200 %}<img src="{{portal_url}}images/icons/archetype/stalker.png" alt="Stalker">{% endif %}
-    {% if character.Class == 9201 %}<img src="{{portal_url}}images/icons/archetype/brute.png" alt="Brute">{% endif %}
-    {% if character.Class == 9700 %}<img src="{{portal_url}}images/icons/archetype/dominator.png" alt="Dominator">{% endif %}
-    {% if character.Class == 10929 %}<img src="{{portal_url}}images/icons/archetype/corruptor.png" alt="Corruptor">{% endif %}
-    {% if character.Class == 7076 %}<img src="{{portal_url}}images/icons/archetype/warshade.png" alt="Warshade">{% endif %}
-    {% if character.Class == 7018 %}<img src="{{portal_url}}images/icons/archetype/peacebringer.png" alt="Peacebringer">{% endif %}
-    {% if character.Class == 37071 %}<img src="{{portal_url}}images/icons/archetype/arachnos_soldier.png" alt="Arachnos Soldier">{% endif %}
-    {% if character.Class == 37072 %}<img src="{{portal_url}}images/icons/archetype/arachnos_widow.png" alt="Arachnos Widow">{% endif %}
-    {% if character.Class == 68887 %}<img src="{{portal_url}}images/icons/archetype/sentinel.png" alt="Sentinel">{% endif %}
+    {% if character.ClassName == 'class_blaster' %}<img src="{{portal_url}}images/icons/archetype/blaster.png" alt="Blaster">{% endif %}
+    {% if character.ClassName == 'class_controller' %}<img src="{{portal_url}}images/icons/archetype/controller.png" alt="Controller">{% endif %}
+    {% if character.ClassName == 'class_defender' %}<img src="{{portal_url}}images/icons/archetype/defender.png" alt="Defender">{% endif %}
+    {% if character.ClassName == 'class_scrapper' %}<img src="{{portal_url}}images/icons/archetype/scrapper.png" alt="Scrapper">{% endif %}
+    {% if character.ClassName == 'class_tanker' %}<img src="{{portal_url}}images/icons/archetype/tanker.png" alt="Tanker">{% endif %}
+    {% if character.ClassName == 'class_mastermind' %}<img src="{{portal_url}}images/icons/archetype/mastermind.png" alt="Mastermind">{% endif %}
+    {% if character.ClassName == 'class_stalker' %}<img src="{{portal_url}}images/icons/archetype/stalker.png" alt="Stalker">{% endif %}
+    {% if character.ClassName == 'class_brute' %}<img src="{{portal_url}}images/icons/archetype/brute.png" alt="Brute">{% endif %}
+    {% if character.ClassName == 'class_dominator' %}<img src="{{portal_url}}images/icons/archetype/dominator.png" alt="Dominator">{% endif %}
+    {% if character.ClassName == 'class_corruptor' %}<img src="{{portal_url}}images/icons/archetype/corruptor.png" alt="Corruptor">{% endif %}
+    {% if character.ClassName == 'class_warshade' %}<img src="{{portal_url}}images/icons/archetype/warshade.png" alt="Warshade">{% endif %}
+    {% if character.ClassName == 'class_peacebringer' %}<img src="{{portal_url}}images/icons/archetype/peacebringer.png" alt="Peacebringer">{% endif %}
+    {% if character.ClassName == 'class_arachnos_soldier' %}<img src="{{portal_url}}images/icons/archetype/arachnos_soldier.png" alt="Arachnos Soldier">{% endif %}
+    {% if character.ClassName == 'class_arachnos_widow' %}<img src="{{portal_url}}images/icons/archetype/arachnos_widow.png" alt="Arachnos Widow">{% endif %}
+    {% if character.ClassName == 'class_sentinel' %}<img src="{{portal_url}}images/icons/archetype/sentinel.png" alt="Sentinel">{% endif %}
 
     {#### Origin #####}
 
-    {% if character.Origin == 6 %}<img src="{{portal_url}}images/icons/origin/science.png" alt="Science">{% endif %}
-    {% if character.Origin == 7 %}<img src="{{portal_url}}images/icons/origin/mutation.png" alt="Mutation">{% endif %}
-    {% if character.Origin == 8 %}<img src="{{portal_url}}images/icons/origin/magic.png" alt="Magic">{% endif %}
-    {% if character.Origin == 9 %}<img src="{{portal_url}}images/icons/origin/technology.png" alt="Technology">{% endif %}
-    {% if character.Origin == 10 %}<img src="{{portal_url}}images/icons/origin/natural.png" alt="Natural">{% endif %}
+    {% if character.Origin == 'science' %}<img src="{{portal_url}}images/icons/origin/science.png" alt="Science">{% endif %}
+    {% if character.Origin == 'mutation' %}<img src="{{portal_url}}images/icons/origin/mutation.png" alt="Mutation">{% endif %}
+    {% if character.Origin == 'magic' %}<img src="{{portal_url}}images/icons/origin/magic.png" alt="Magic">{% endif %}
+    {% if character.Origin == 'technology' %}<img src="{{portal_url}}images/icons/origin/technology.png" alt="Technology">{% endif %}
+    {% if character.Origin == 'natural' %}<img src="{{portal_url}}images/icons/origin/natural.png" alt="Natural">{% endif %}
 
     <a href="./api/character/raw?q={{character.datauri}}">{{character.Name}}</a>
 
