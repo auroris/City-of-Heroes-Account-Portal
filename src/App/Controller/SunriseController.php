@@ -25,7 +25,7 @@ class SunriseController
         setlocale(LC_TIME, 'Zulu');
         $newResponse = $response->withHeader('Content-type', 'text/xml');
 
-        return $this->container->get('renderer')->render($newResponse, 'sunrise\sunrise.xml',
+        return $this->container->get('renderer')->render($newResponse, 'sunrise\manifest.xml',
         [
             'portal_name' => getenv('portal_name'),
         ]);

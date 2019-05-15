@@ -40,8 +40,8 @@ return function (App $app) {
         });
 
         $app->get('/character/{type}', APIController::class.':GetCharacter');
-        $app->get('/sunrise/manifest', SunriseController::class.':Manifest');
-        $app->get('/sunrise/uptime', SunriseController::class.':Uptime');
+        $app->get('/sunrise/manifest.xml', SunriseController::class.':Manifest');
+        $app->get('/sunrise/uptime.xml', SunriseController::class.':Uptime');
 
         // 404'd if anything else
         $app->map(['GET', 'POST', 'PUT', 'DELETE', 'PATCH'], '/{routes:.+}', function ($req, $res) {
