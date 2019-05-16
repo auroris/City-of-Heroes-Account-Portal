@@ -20,7 +20,7 @@ class StaticController
     {
         $gameStats = new \App\Model\CoHStats();
 
-        return $this->container->get('renderer')->render($response, 'page-index.phtml', [
+        return $this->container->get('renderer')->render($response, 'core/page-index.phtml', [
             'accounts' => $gameStats->CountAccounts(),
             'characters' => $gameStats->CountCharacters(),
             'status' => $gameStats->GetServerStatus(),
@@ -29,7 +29,7 @@ class StaticController
 
     public function Create(Request $request, Response $response, array $args)
     {
-        return $this->container->get('renderer')->render($response, 'page-create-account.phtml');
+        return $this->container->get('renderer')->render($response, 'core/page-create-account.phtml');
     }
 
     public function Manage(Request $request, Response $response, array $args)
@@ -42,7 +42,7 @@ class StaticController
 
         return $this->container->get('renderer')->render(
             $response,
-            'page-manage.phtml',
+            'core/page-manage.phtml',
             ['username' => $_SESSION['account']->GetUsername(),
             'characters' => $_SESSION['account']->GetCharacterList(),
             'federation' => $GLOBALS['federation'],

@@ -1,0 +1,8 @@
+{% extends "core/template-base.phtml" %}
+
+{% block title %}{{portal_name}} Account Portal{% endblock %}
+
+{% block content %}
+    {# Include index from main templates directory. If it's absent, just produce my basic server status block. #}
+    {% include ['index.phtml', 'core/block-server-status.phtml'] %}
+{% endblock %}

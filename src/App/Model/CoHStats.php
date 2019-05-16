@@ -59,10 +59,10 @@ class CoHStats
         $cmd = getenv('dbquery').' -dbquery';
 
         try {
-            $results = Exec::Exec($cmd, 1);
+            $results = Exec::Exec($cmd, 5);
 
             if (strlen($results) > 0) {
-                $uptime = explode(',', implode('\n', $results)[10]);
+                $uptime = explode(',', explode("\n", $results)[10]);
 
                 return ['status' => 'Online',
                 'uptime' => substr(trim($uptime[1].' '.$uptime[2]), 3),
@@ -71,7 +71,7 @@ class CoHStats
                 return ['status' => 'Offline'];
             }
         } catch (Exception $e) {
-            return ['status' => 'Offline'];
+            return ['status' => 'Broken'];
         }
     }
 }

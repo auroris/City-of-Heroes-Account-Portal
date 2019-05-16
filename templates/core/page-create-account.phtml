@@ -1,8 +1,14 @@
+{% extends "core/template-base.phtml" %}
+
+{% block title %}Create Your Account{% endblock %}
+
+{% block content %}
 <div class="block">
     <div class="blocktitle">
         CREATE YOUR ACCOUNT
     </div>
     <div class="blockbody">
+        {% include 'create.phtml' ignore missing %}
         <form method="post" action="create">
             <table width="100%">
                 <tr>
@@ -23,3 +29,4 @@
         </form>
     </div>
 </div>
+{% endblock %}

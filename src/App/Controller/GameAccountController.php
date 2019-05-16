@@ -25,12 +25,12 @@ class GameAccountController
             $gameAccount->Create($_POST['username'], $_POST['password']);
             $_SESSION['account'] = $gameAccount;
 
-            return $this->container->get('renderer')->render($response, 'page-create-account-success.phtml');
+            return $this->container->get('renderer')->render($response, 'core/page-create-account-success.phtml');
         } catch (Exception $e) {
-            return $this->container->get('renderer')->render($response, 'page-create-account-error.phtml', ['message' => $e->getMessage()]);
+            return $this->container->get('renderer')->render($response, 'core/page-create-account-error.phtml', ['message' => $e->getMessage()]);
         }
 
-        return $this->container->get('renderer')->render($response, 'page-create-account.phtml');
+        return $this->container->get('renderer')->render($response, 'core/page-create-account.phtml');
     }
 
     public function Login(Request $request, Response $response, array $args)
@@ -48,7 +48,7 @@ class GameAccountController
 
                 return $response->withRedirect($_SESSION['nextpage']);
             } catch (Exception $e) {
-                return $this->container->get('renderer')->render($response, 'page-login.phtml', [
+                return $this->container->get('renderer')->render($response, 'core/page-login.phtml', [
                         'title' => 'Login Failure',
                         'message' => $e->getMessage(),
                     ]);
@@ -58,7 +58,7 @@ class GameAccountController
                 return $response->withRedirect($_SESSION['nextpage']);
             }
 
-            return $this->container->get('renderer')->render($response, 'page-login.phtml', ['nextpage' => 'login']);
+            return $this->container->get('renderer')->render($response, 'core/page-login.phtml', ['nextpage' => 'login']);
         }
     }
 
@@ -80,7 +80,7 @@ class GameAccountController
 
         $result = $_SESSION['account']->ChangePassword($_POST['password']);
 
-        return $this->container->get('renderer')->render($response, 'page-generic-message.phtml', [
+        return $this->container->get('renderer')->render($response, 'core/page-generic-message.phtml', [
             'title' => 'Success',
             'message' => 'Successfully Changed Password', ]);
     }

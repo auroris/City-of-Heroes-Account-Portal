@@ -43,6 +43,9 @@ class Exec
         // Output buffer.
         $buffer = '';
 
+        // Process status
+        $status = array();
+
         // While we have time to wait.
         while ($timeout > 0) {
             $start = microtime(true);
@@ -71,10 +74,12 @@ class Exec
         }
 
         // Check if there were any errors.
-        $errors = stream_get_contents($pipes[2]);
+        if ($status['exitcode'] > 0) {
+            $errors = stream_get_contents($pipes[2]);
 
-        if (!empty($errors)) {
-            throw new \Exception($errors);
+            if (!empty($errors)) {
+                throw new \Exception($errors);
+            }
         }
 
         // Kill the process in case the timeout expired and it's still running.

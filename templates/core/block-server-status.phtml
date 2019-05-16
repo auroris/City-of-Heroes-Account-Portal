@@ -1,0 +1,14 @@
+<div class="block">
+    <div class="blocktitle">
+        Welcome to {{portal_name}}!
+    </div>
+    <div class="blockbody">
+        {% if status.status == 'Online'  %}
+            <p>Server started on {{status.started}}, running for {{status.uptime}}</p>
+        {% else %}
+            <p>Server is currently down.</p>
+        {% endif %}
+
+        <p>There are {{accounts}}  registered accounts holding {{characters}} characters.</p>
+    </div>
+</div>

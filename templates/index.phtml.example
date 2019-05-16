@@ -1,8 +1,3 @@
-{% extends "template-base.phtml" %}
-
-{% block title %}Account Portal{% endblock %}
-
-{% block content %}
 <div class="block">
     <div class="blocktitle">
         Welcome to {{portal_name}}!
@@ -20,7 +15,19 @@
     </div>
 </div>
 
-{{ include('block-client-download.phtml') }}
+<div class="block">
+    <div class="blocktitle">
+        Client Download
+    </div>
+    <div class="blockbody">
+        <p>To download the client, please follow these steps:</p>
+        <ol>
+            <li>Download the client <a href="https://drive.google.com/open?id=1rHNhoAPn6haVt6afLTxoGvh5pAPjT_Vy">from here</a>.</li>
+            <li>Extract it somewhere convenient.</li>
+            <li>Run "AurorisCOH.bat" and login with the account you created.</li>
+        </ol>
+    </div>
+</div>
 
 <div class="block">
     <div class="blocktitle">
@@ -30,4 +37,3 @@
         <p><a href="https://discord.gg/UyBcpxa">Join the community on Discord.</a></p>
     </div>
 </div>
-{% endblock %}
