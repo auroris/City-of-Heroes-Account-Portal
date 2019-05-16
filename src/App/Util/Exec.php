@@ -25,7 +25,7 @@ class Exec
         );
 
         // Start the process.
-        $process = proc_open('exec '.$cmd, $descriptors, $pipes);
+        $process = proc_open($cmd, $descriptors, $pipes);
 
         if (!is_resource($process)) {
             throw new \Exception('Could not execute process');

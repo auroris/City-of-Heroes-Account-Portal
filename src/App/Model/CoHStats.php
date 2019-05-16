@@ -71,7 +71,7 @@ class CoHStats
                 return ['status' => 'Offline'];
             }
         } catch (Exception $e) {
-            return ['status' => 'Broken'];
+            return ['status' => 'broken - '.$e->getMessage()];
         }
     }
 }

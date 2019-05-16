@@ -6,7 +6,7 @@
         {% if status.status == 'Online'  %}
             <p>Server started on {{status.started}}, running for {{status.uptime}}</p>
         {% else %}
-            <p>Server is currently down.</p>
+            <p>Server is currently {{status.status}}.</p>
         {% endif %}
 
         <p>There are {{accounts}}  registered accounts holding {{characters}} characters.</p>
