@@ -33,10 +33,11 @@ extension=php_pdo_sqlsrv_73_ts_x64
 
 # Customization
 
-Website content can be found in the `\templates` directory. You will need to customize
+Website content can be found in the `\templates` directory. Rename the .example files by removing the extension '.example'. Then customize to taste.
 
-* `page-index.phtml`
-* `block-client-download.phtml`
+* create.phtml is displayed as text above the create your account form. Use this for EULA, rules, etc.
+* index.phtml lets you customize your main index page. If you do not have this file, a default server status message will be displayed instead.
+* menuitems.phtml allows you to add additional menu items to the bottom of the main menu.
 
 # Support
 
