@@ -2,6 +2,9 @@
 
 namespace App\Model;
 
+use Exception;
+use App\Util\Exec;
+
 class CoHStats
 {
     protected $conn;
@@ -54,20 +57,20 @@ class CoHStats
     public function GetServerStatus()
     {
         $cmd = getenv('dbquery').' -dbquery';
-        
-        $results = array();
-        $ret = 0;
-        exec($cmd, $results, $ret);
 
-        if ($ret == 0)
-        {
-            $uptime = explode(',', $results[10]);
-            return ['status' => 'Online', 
-            'uptime' => substr(trim($uptime[1] . ' ' . $uptime[2]), 3), 
-            'started' => trim(substr($uptime[0], 20))];
-        }
-        else
-        {
+        try {
+            $results = Exec::Exec($cmd, 1);
+
+            if (strlen($results) > 0) {
+                $uptime = explode(',', implode('\n', $results)[10]);
+
+                return ['status' => 'Online',
+                'uptime' => substr(trim($uptime[1].' '.$uptime[2]), 3),
+                'started' => trim(substr($uptime[0], 20)), ];
+            } else {
+                return ['status' => 'Offline'];
+            }
+        } catch (Exception $e) {
             return ['status' => 'Offline'];
         }
     }

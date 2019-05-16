@@ -3,6 +3,7 @@
 namespace App\Model;
 
 use App\Util\SqlServer;
+use App\Util\Exec;
 use Exception;
 
 class Character
@@ -21,15 +22,7 @@ class Character
 
         if ('' != $name) {
             if ($this->sql->ReturnsRows('SELECT ContainerId FROM cohdb.dbo.ents WHERE name = ?', array($name))) {
-                $results = array();
-                $ret = 0;
-                exec($cmd, $this->results, $ret);
-
-                if (0 != $ret) {
-                    throw new Exception('Calling '.$cmd.' failed with a return code of '.$ret.'. Returned info: '.print_r($this->results, true));
-                }
-
-                $this->ParseResults();
+                $this->ParseResults(Exec::Exec($cmd, 5));
                 $this->BlacklistEntries();
             } else {
                 throw new Exception('No such character "'.$name.'"');
@@ -49,10 +42,12 @@ class Character
         unset($this->attributes['Ents2'][0]['AuthUserDataEx']);
     }
 
-    private function ParseResults()
+    private function ParseResults($in)
     {
+        $results = explode('\n', $in);
+
         // Let's loop through every result and determine if it's a single key=value or array of sorts.
-        foreach ($this->results as $result) {
+        foreach ($results as $result) {
             // Some values have "//" and also have "// " at the start - Which is very odd might be best to see if we can fix it at source or not.
             // We need to remove these values to allow the below to extract correctly.
             // @TODO: Check this doesn't impact the import later? Are the // Needed at all? do these rows even have to be extracted?
@@ -128,12 +123,9 @@ class Character
 
         $cmd = getenv('dbquery').' -putcharacter < '.$path.' 2>&1';
 
-        exec($cmd, $output, $ret);
+        Exec::Exec($cmd, 10);
 
-        if (0 != $ret) {
-            fclose($file);
-            throw new Exception('Calling '.$cmd.' failed with a return code of '.$ret.'. Returned info:<br>'.implode('<br>', $this->results));
-        }
+        fclose($file);
     }
 
     public function GetAlignment()
