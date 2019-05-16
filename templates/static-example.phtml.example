@@ -1,0 +1,14 @@
+{% extends "core/template-base.phtml" %}
+
+{% block title %}Static Example Page{% endblock %}
+
+{% block content %}
+<div class="block">
+    <div class="blocktitle">
+        Static Content Example
+    </div>
+    <div class="blockbody">
+        HTML Content goes here. Rename this file to static-example.phtml, then access this page <a href="{{portal_url}}/static-example.phtml">on your portal</a>.
+    </div>
+</div>
+{% endblock %}

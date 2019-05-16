@@ -13,6 +13,7 @@ return function (App $app) {
     MonoLogger::SetLogger($container->get('logger'));
 
     $app->get('/', StaticController::class.':Home');
+    $app->get('/{page}.phtml', StaticController::class.':Page');
 
     $app->group('', function (App $app) {
         $app->get('/create', StaticController::class.':Create');

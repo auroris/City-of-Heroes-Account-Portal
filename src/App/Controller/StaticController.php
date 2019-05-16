@@ -5,6 +5,7 @@ namespace App\Controller;
 use Psr\Container\ContainerInterface;
 use Slim\Http\Request;
 use Slim\Http\Response;
+use Exception;
 
 class StaticController
 {
@@ -48,5 +49,20 @@ class StaticController
             'federation' => $GLOBALS['federation'],
             ]
         );
+    }
+
+    public function Page(Request $request, Response $response, array $args)
+    {
+        try {
+            return $this->container->get('renderer')->render(
+                $response,
+                $args['page'].'.phtml'
+            );
+        } catch (Exception $e) {
+            //404'd
+            $handler = $this->container->notFoundHandler;
+
+            return $handler($request, $response);
+        }
     }
 }
