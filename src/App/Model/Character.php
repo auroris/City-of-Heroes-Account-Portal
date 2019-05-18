@@ -21,7 +21,7 @@ class Character
         $cmd = getenv('dbquery').' -getcharacter '.escapeshellarg($name);
 
         if ('' != $name) {
-            if ($this->sql->ReturnsRows('SELECT ContainerId FROM cohdb.dbo.ents WHERE name = ?', array($name))) {
+            if ($this->sql->ReturnsRows('SELECT ContainerId FROM '.getenv('cohdb').'.ents WHERE name = ?', array($name))) {
                 $this->ParseResults(Exec::Exec($cmd, 5));
                 $this->BlacklistEntries();
             } else {

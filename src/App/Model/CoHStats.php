@@ -17,7 +17,7 @@ class CoHStats
     public function CountAccounts()
     {
         try {
-            $qTotalAccounts = sqlsrv_query($this->conn, 'SELECT count(*) FROM cohauth.dbo.user_account');
+            $qTotalAccounts = sqlsrv_query($this->conn, 'SELECT count(*) FROM '.getenv('cohauth').'.user_account');
             sqlsrv_fetch($qTotalAccounts);
 
             return sqlsrv_get_field($qTotalAccounts, 0);
@@ -29,7 +29,7 @@ class CoHStats
     public function CountCharacters()
     {
         try {
-            $qTotalChars = sqlsrv_query($this->conn, 'SELECT count(*) FROM cohdb.dbo.ents');
+            $qTotalChars = sqlsrv_query($this->conn, 'SELECT count(*) FROM '.getenv('cohdb').'.ents');
             sqlsrv_fetch($qTotalChars);
 
             return sqlsrv_get_field($qTotalChars, 0);
@@ -41,7 +41,7 @@ class CoHStats
     public function GetOnline()
     {
         try {
-            $qOnline = sqlsrv_query($this->conn, 'SELECT Name FROM cohdb.dbo.ents WHERE Active > 0 ORDER BY Name ASC');
+            $qOnline = sqlsrv_query($this->conn, 'SELECT Name FROM '.getenv('cohdb').'.ents WHERE Active > 0 ORDER BY Name ASC');
             $arr = array();
 
             while ($row = sqlsrv_fetch_array($qOnline, SQLSRV_FETCH_NUMERIC)) {
