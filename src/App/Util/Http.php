@@ -10,7 +10,7 @@ class Http
     {
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
         $response = curl_exec($ch);
@@ -33,7 +33,7 @@ class Http
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
         $response = curl_exec($ch);
         if (200 !== curl_getinfo($ch, CURLINFO_HTTP_CODE)) {
-            die('<h1>Error from remote site</h1>'.print_r($response, true));
+            throw new Exception('<h1>Error from remote site</h1>'.print_r($response, true));
         }
         curl_close($ch);
 

@@ -21,8 +21,9 @@ class Character
         $cmd = getenv('dbquery').' -getcharacter '.escapeshellarg($name);
 
         if ('' != $name) {
-            if ($this->sql->ReturnsRows('SELECT ContainerId FROM '.getenv('cohdb').'.ents WHERE name = ?', array($name))) {
-                $this->ParseResults(Exec::Exec($cmd, 5));
+            if ($this->sql->ReturnsRows('SELECT ContainerId FROM '.getenv('cohdb').'.ents WHERE Name = ?', array($name))) {
+                $this->results = explode("\n", Exec::Exec($cmd, 5));
+                $this->ParseResults();
                 $this->BlacklistEntries();
             } else {
                 throw new Exception('No such character "'.$name.'"');
@@ -42,12 +43,10 @@ class Character
         unset($this->attributes['Ents2'][0]['AuthUserDataEx']);
     }
 
-    private function ParseResults($in)
+    private function ParseResults()
     {
-        $results = explode('\n', $in);
-
         // Let's loop through every result and determine if it's a single key=value or array of sorts.
-        foreach ($results as $result) {
+        foreach ($this->results as $result) {
             // Some values have "//" and also have "// " at the start - Which is very odd might be best to see if we can fix it at source or not.
             // We need to remove these values to allow the below to extract correctly.
             // @TODO: Check this doesn't impact the import later? Are the // Needed at all? do these rows even have to be extracted?
@@ -58,6 +57,8 @@ class Character
                     continue;
                 }
             }
+
+            $result = trim($result);
 
             $val = explode(' ', $result, 2);
             if (false === $val || 2 != count($val)) {

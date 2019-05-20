@@ -4,5 +4,5 @@
 *.swp
 config.env
 federation.php
-
 /templates/*.phtml
+!.htaccess

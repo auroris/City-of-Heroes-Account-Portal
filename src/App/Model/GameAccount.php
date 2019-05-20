@@ -65,6 +65,11 @@ class GameAccount
         // Generate a new account ID and password hash
         $qNewAccountUID = $this->sql->FetchNumeric('SELECT max(uid) + 1 FROM '.getenv('cohauth').'.user_account');
         $uid = $qNewAccountUID[0][0];
+
+        if (null == $uid) {
+            $uid = 10;
+        }
+
         $hash = DataHandling::BinPassword($username, $password);
 
         // SQL statements to execute
@@ -166,5 +171,13 @@ class GameAccount
     public function GetUID()
     {
         return $this->uid;
+    }
+
+    public function IsOnline()
+    {
+        $this->wakeup();
+        $res = $this->sql->FetchNumeric('SELECT count(*) FROM '.getenv('cohdb').'.Ents WHERE AuthName = ? AND Active > 0', array($this->username));
+
+        return $res[0][0];
     }
 }

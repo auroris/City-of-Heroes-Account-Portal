@@ -41,16 +41,39 @@ class CoHStats
     public function GetOnline()
     {
         try {
-            $qOnline = sqlsrv_query($this->conn, 'SELECT Name FROM '.getenv('cohdb').'.ents WHERE Active > 0 ORDER BY Name ASC');
-            $arr = array();
+            $qOnline = sqlsrv_query($this->conn, 'SELECT Ents.Name, Ents.StaticMapId, Ents.AccessLevel, Ents2.LfgFlags FROM '.getenv('cohdb').'.Ents INNER JOIN '.getenv('cohdb').'.Ents2 ON Ents.ContainerId = Ents2.ContainerId WHERE Ents.Active > 0 ORDER BY Name ASC');
 
-            while ($row = sqlsrv_fetch_array($qOnline, SQLSRV_FETCH_NUMERIC)) {
-                array_push($arr, $row[0]);
+            $arr = array();
+            $onlineCount = 0;
+
+            // No rows or error, return 0
+            if (false === sqlsrv_has_rows($qOnline)) {
+                return ['Count' => 0, 'List' => []];
             }
 
-            return $arr;
+            while ($row = sqlsrv_fetch_array($qOnline, SQLSRV_FETCH_ASSOC)) {
+                // Skip CSR's if policy requires
+                if ($row['AccessLevel'] >= getenv('portal_hide_csr')) {
+                    continue;
+                }
+
+                // Start counting number of non CSR players
+                ++$onlineCount;
+
+                // If LFG Only policy, then list only LFG people: people whose LfgFlag is not null (default not seeking), not 0 (not seeking), and not 128 (do not accept invites).
+                if ('true' == getenv('portal_lfg_only') && (!isset($row['LfgFlags']) || 0 == $row['LfgFlags'] || 128 == $row['LfgFlags'])) {
+                    continue;
+                }
+
+                // Associate map name
+                $row['MapName'] = Maps::$ID[$row['StaticMapId']];
+
+                array_push($arr, $row);
+            }
+
+            return ['Count' => $onlineCount, 'List' => $arr];
         } catch (Exception $e) {
-            return -1;
+            return ['Count' => 0, 'List' => []];
         }
     }
 

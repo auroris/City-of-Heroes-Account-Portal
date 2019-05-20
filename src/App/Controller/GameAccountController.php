@@ -29,8 +29,6 @@ class GameAccountController
         } catch (Exception $e) {
             return $this->container->get('renderer')->render($response, 'core/page-create-account-error.phtml', ['message' => $e->getMessage()]);
         }
-
-        return $this->container->get('renderer')->render($response, 'core/page-create-account.phtml');
     }
 
     public function Login(Request $request, Response $response, array $args)

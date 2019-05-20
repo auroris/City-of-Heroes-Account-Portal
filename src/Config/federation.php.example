@@ -8,10 +8,11 @@ $GLOBALS['federation'] = [
         'Url' => 'http://localhost:8080/Github-City-of-Heroes-Account-Portal/public',
         'Policy' => [ // Policy for characters coming from 'Aurora Server'
             'AllowTransfers' => false, // false to not allow transfers from here; true to allow. Allowing transfers to ourself is a good way to duplicate characters.
-            'ForceInfluence' => 0, // 0 (or any number) to force inf to that number; false to disable and allow whatever the character has
-            'ForceAccessLevel' => 0, // 0 (or any number) to force access level to that number; false to disable and allow whatever the character has
+            'ForceInfluence' => 0, // 0 (or any number) to force inf to that number; -1 to disable and allow whatever the character has
+            'ForceAccessLevel' => 0, // 0 (or any number) to force access level to that number; -1 to disable and allow whatever the character has
             'AllowInventory' => false, // false to delete the inventory, true to allow whatever the character has
             'ForceDefaultMap' => false, // false to allow user to be on whatever map they were on when they transferred; true to force them to Atlas Park, Mercy Island or Nova Praetoria, depending on their current alignment
+            'DeleteOnTransfer' => true, // true to require characters be deleted when transferring from aurora server to here, false to leave them alone. Deleted characters are exported to the /characterbackups folder.
         ],
         'Crypto' => [ // Crypto keys used for any federation member who wants to send a message to us
             'key' => 'AuroraKey',
@@ -23,10 +24,11 @@ $GLOBALS['federation'] = [
         'Url' => 'https://play.cityofheroesrebirth.com/',
         'Policy' => [ // Policy for characters coming from CoH Rebirth
             'AllowTransfers' => true, // We like characters from Rebirth coming for a visit
-            'ForceInfluence' => false, // Allow inf to carry over
+            'ForceInfluence' => -1, // Allow inf to carry over
             'ForceAccessLevel' => 0, // GM's from Rebirth aren't allowed to be GM's here
             'AllowInventory' => true, // Allow inventory to carry over
             'ForceDefaultMap' => false,
+            'DeleteOnTransfer' => true,
         ],
         'Crypto' => [
             'key' => 'RebirthKey',

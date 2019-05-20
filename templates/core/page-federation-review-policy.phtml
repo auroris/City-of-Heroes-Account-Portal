@@ -1,0 +1,51 @@
+{% extends "core/template-base.phtml" %}
+
+{% block title %}Policy Review{% endblock %}
+
+{% block content %}
+<div class="block">
+    <div class="blocktitle">
+        Policy Review
+    </div>
+    <div class="blockbody">
+        <p>Welcome to {{portal_name}}. Policies implemented by this server may alter characters transferring from {{Server.Name}}. Please review the policy below and click <b>Continue</b> if you still wish to proceed with the transfer.</p>
+
+        <ul>
+            {% if Server.Policy.DeleteOnTransfer == true %}
+            <li>Your character will be <b>moved</b> from {{Server.Name}} to {{portal_name}}. This means it will no longer be available on your former server.</li>
+            {% else %}
+            <li>Your character will be <b>copied</b> from {{Server.Name}}.</li>
+            {% endif %}
+
+            {% if Server.Policy.ForceInfluence != -1 %}
+            <li>Influence is set to {{Server.Policy.ForceInfluence}}.</li>
+            {% else %}
+            <li>Influence is unchanged.</li>
+            {% endif %}
+
+            {% if Server.Policy.AllowInventory == false %}
+            <li>Inventory is removed.</li>
+            {% else %}
+            <li>Inventory is unchanged.</li>
+            {% endif %}
+
+            {% if Server.Policy.ForceDefaultMap == true %}
+            <li>You will be transferred to Pocket D.</li>
+            {% endif %}
+
+            <table width="100%">
+                <tr>
+                    <td>
+                        <input type="button" value="Cancel" onclick="javascript:window.history.go(-1);">
+                    </td>
+                    <td>
+                        <form method="post" action="pull-character">
+                            <input type="submit" value="Confirm">
+                        </form>
+                    </td>
+                </tr>
+            </table>
+        </ul>
+    </div>
+</div>
+{% endblock %}

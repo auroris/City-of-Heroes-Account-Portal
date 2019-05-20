@@ -9,6 +9,8 @@ use App\Model\GameAccount;
 use App\Messages\Message;
 use App\Util\Http;
 use App\Model\Character;
+use App\Util\SqlServer;
+use App\Util\DataHandling;
 use Exception;
 
 class FederationController
@@ -23,6 +25,29 @@ class FederationController
     // Prepares a message to the destination server and transfers you there to perform the character pull
     public function TransferCharacterRequest(Request $HttpRequest, Response $HttpResponse, array $HttpArgs)
     {
+        $sql = SqlServer::getInstance();
+
+        // If person is online, tell them to get off first
+        if ($_SESSION['account']->IsOnline()) {
+            return $this->container->get('renderer')->render($HttpResponse, 'core/page-generic-message.phtml', [
+                'title' => 'Log Off First',
+                'message' => 'You must log out of the game before you can initiate a character transfer.', ]);
+        }
+
+        // Get the character's ContainerId
+        $containerId = $sql->FetchNumeric(
+            'SELECT ContainerId FROM '.getenv('cohdb').'.Ents WHERE Name = ?',
+            array(DataHandling::Decrypt(urldecode($_POST['character']), getenv('portal_key'), getenv('portal_iv')))
+        );
+
+        // If the character is locked for transfer already, abort
+        $isLocked = $sql->ReturnsRows('SELECT AccSvrLock FROM '.getenv('cohdb').'.Ents2 WHERE ContainerId = ? AND AccSvrLock IS NOT NULL', array($containerId[0][0]));
+        if ($isLocked) {
+            return $this->container->get('renderer')->render($HttpResponse, 'core/page-generic-message.phtml', [
+                'title' => 'Character Locked',
+                'message' => 'This character is locked for transfer. If this is in error, please contact a GM.', ]);
+        }
+
         $fedServer = $this->FindFederationServerByName($_POST['server']);
         $myUsername = $_SESSION['account']->GetUsername();
         $myPassword = $_SESSION['account']->GetPassword();
@@ -33,9 +58,17 @@ class FederationController
         $login->action = 'PullCharacter';
         $login->character = $_POST['character'];
 
+        // Lockout the character
+        $sql->Query(
+            'UPDATE '.getenv('cohdb').'.Ents2 SET AccSvrLock = ? WHERE ContainerId = ?',
+            array(substr('transfer to '.$fedServer['Name'], 0, 72), $containerId[0][0])
+        );
+
         return $HttpResponse->withRedirect($fedServer['Url'].'/federation/login?message='.urlencode(json_encode($login)));
     }
 
+    // Attempts to log you in automatically; if it fails redirects you to the portal's normal login page. After, character transfer
+    // request will proceed.
     public function Login(Request $HttpRequest, Response $HttpResponse, array $HttpArgs)
     {
         $message = new Message();
@@ -45,15 +78,28 @@ class FederationController
             $_SESSION['account'] = $gameAccount;
             $_SESSION['pullcharacter'] = ['character' => $message->character, 'from' => $message->from];
 
-            return $HttpResponse->withRedirect('pull-character');
+            return $HttpResponse->withRedirect('review-policy');
         } else {
-            $_SESSION['nextpage'] = 'federation/pull-character';
+            $_SESSION['nextpage'] = 'federation/review-policy';
             $_SESSION['pullcharacter'] = ['character' => $message->character, 'from' => $message->from];
 
             return $HttpResponse->withRedirect(getenv('portal_url').'login');
         }
     }
 
+    // Informs the user of this server's incoming character policy.
+    public function ReviewPolicy(Request $HttpRequest, Response $HttpResponse, array $HttpArgs)
+    {
+        if (!isset($_SESSION['pullcharacter']) || !isset($_SESSION['account'])) {
+            throw new Exception('Your session is not correct or has expired.');
+        }
+
+        $fedServer = $this->FindFederationServerByName($_SESSION['pullcharacter']['from']);
+
+        return $this->container->get('renderer')->render($HttpResponse, 'core/page-federation-review-policy.phtml', ['Server' => $fedServer]);
+    }
+
+    // Pulls the character over and implements all transfer policies.
     public function PullCharacter(Request $HttpRequest, Response $HttpResponse, array $HttpArgs)
     {
         try {
@@ -62,6 +108,7 @@ class FederationController
             }
 
             $fedServer = $this->FindFederationServerByName($_SESSION['pullcharacter']['from']);
+
             $rawData = Http::Get($fedServer['Url'].'/api/character/raw?q='.$_SESSION['pullcharacter']['character']);
             $character = new Character();
             $character->SetArray(explode("\n", $rawData));
@@ -76,12 +123,12 @@ class FederationController
             }
 
             // Apply the ForceInfluence policy
-            if (isset($fedServer['Policy']['ForceInfluence']) && false !== $fedServer['Policy']['ForceInfluence']) {
+            if (isset($fedServer['Policy']['ForceInfluence']) && -1 !== $fedServer['Policy']['ForceInfluence']) {
                 $character->InfluencePoints = $fedServer['Policy']['ForceInfluence'];
             }
 
             // Apply the ForceAccessLevel policy
-            if (isset($fedServer['Policy']['ForceAccessLevel']) && false !== $fedServer['Policy']['ForceAccessLevel']) {
+            if (isset($fedServer['Policy']['ForceAccessLevel']) && -1 !== $fedServer['Policy']['ForceAccessLevel']) {
                 if (isset($character->AccessLevel)) { //AccessLevel is not currently specified in our exports, so it defaults to null right now
                     $character->AccessLevel = $fedServer['Policy']['ForceAccessLevel'];
                 }
@@ -95,7 +142,9 @@ class FederationController
                 unset($character->PosX);
                 unset($character->PosY);
                 unset($character->PosZ);
+                unset($character->OrientP);
                 unset($character->OrientY);
+                unset($character->OrientR);
             }
 
             // Apply the AllowInventory policy
@@ -104,7 +153,17 @@ class FederationController
                 unset($character->InvRecipeInvention);
             }
 
-            $character->PutCharacter();
+            // Put the character into the database
+            //$character->PutCharacter();
+
+            // If all steps succeeded to this point, apply the delete policy to the foreign server.
+            if (true == $fedServer['Policy']['DeleteOnTransfer']) {
+                $message = new Message($fedServer['Name']);
+                $message->character = $_SESSION['pullcharacter']['character'];
+                $result = Http::Post($fedServer['Url'].'/api/character/delete', ['message' => json_encode($message)]);
+
+                print_r($result);
+            }
 
             return $this->container->get('renderer')->render($HttpResponse, 'core/page-generic-message.phtml', ['title' => 'Welcome to '.getenv('portal_name'), 'message' => $character->Name.' has been transferred successfully!']);
         } catch (Exception $e) {

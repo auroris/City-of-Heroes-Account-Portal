@@ -40,6 +40,7 @@ return function (App $app) {
                     ->withHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
         });
 
+        $app->post('/character/delete', APIController::class.':DeleteCharacter');
         $app->get('/character/{type}', APIController::class.':GetCharacter');
         $app->get('/sunrise/manifest.xml', SunriseController::class.':Manifest');
         $app->get('/sunrise/uptime.xml', SunriseController::class.':Uptime');
@@ -53,8 +54,9 @@ return function (App $app) {
     });
 
     $app->group('/federation', function (App $app) {
-        $app->get('/login', FederationController::class.':Login');
         $app->post('/transfer-character-request', FederationController::class.':TransferCharacterRequest');
-        $app->get('/pull-character', FederationController::class.':PullCharacter');
+        $app->get('/login', FederationController::class.':Login');
+        $app->get('/review-policy', FederationController::class.':ReviewPolicy');
+        $app->post('/pull-character', FederationController::class.':PullCharacter');
     });
 };

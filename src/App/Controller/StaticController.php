@@ -5,6 +5,7 @@ namespace App\Controller;
 use Psr\Container\ContainerInterface;
 use Slim\Http\Request;
 use Slim\Http\Response;
+use App\Model\Maps;
 use Exception;
 
 class StaticController
@@ -44,9 +45,11 @@ class StaticController
         return $this->container->get('renderer')->render(
             $response,
             'core/page-manage.phtml',
-            ['username' => $_SESSION['account']->GetUsername(),
-            'characters' => $_SESSION['account']->GetCharacterList(),
-            'federation' => $GLOBALS['federation'],
+            [
+                'username' => $_SESSION['account']->GetUsername(),
+                'characters' => $_SESSION['account']->GetCharacterList(),
+                'federation' => $GLOBALS['federation'],
+                'maplist' => Maps::$ID,
             ]
         );
     }

@@ -46,12 +46,26 @@
                 <br />
                 <div class="littleblock">
                     <div class="blocktitle">
-                        {{online|length}} Players Online
+                        {{online.Count}} Players Online
                     </div>
                     <div class="blockbody">
-                        {% for char in online %}
-                            {{ char }}<br />
+                        {% if portal_lfg_only == true %}
+                            {{ online.List|length }} looking for group
+                        {% endif %}
+
+                        <ul>
+                        {% for map in online.MapList %}
+                            <li>{{ map }}
+                            <ul>
+
+                            {% for char in online.List %}
+                                {% if char.MapName == map %}
+                                    <li>{{ char.Name }}</li>
+                                {% endif %}
+                            {% endfor %}
+                            </ul></li>
                         {% endfor %}
+                        </ul>
                     </div>
                 </div>
 
