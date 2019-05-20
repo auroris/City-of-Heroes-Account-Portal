@@ -5,4 +5,5 @@
 config.env
 federation.php
 /templates/*.phtml
+/backups/*
 !.htaccess
