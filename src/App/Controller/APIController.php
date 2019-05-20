@@ -8,6 +8,7 @@ use Slim\Http\Response;
 use App\Model\Character;
 use App\Util\DataHandling;
 use App\Messages\Message;
+use App\Util\SqlServer;
 use Exception;
 
 class APIController
@@ -20,16 +21,16 @@ class APIController
         $this->container = $container;
     }
 
-    public function GetCharacter(Request $request, Response $response, array $args)
+    public function GetCharacter(Request $HttpRequest, Response $HttpResponse, array $HttpArgs)
     {
         $character = new Character(DataHandling::Decrypt($_GET['q'], getenv('portal_key'), getenv('portal_iv')));
 
         if (isset($args['type']) && 'json' == $args['type']) {
-            $newResponse = $response->withHeader('Content-type', 'application/json');
+            $newResponse = $HttpResponse->withHeader('Content-type', 'application/json');
 
             return $newResponse->write($character->ToJSON());
         } else {
-            $newResponse = $response->withHeader('Content-type', 'text/plain');
+            $newResponse = $HttpResponse->withHeader('Content-type', 'text/plain');
 
             return $newResponse->write(implode("\n", $character->ToArray()));
         }
@@ -40,7 +41,8 @@ class APIController
         $message = new Message();
         $message->Unserialize($_POST['message']);
 
-        $character = new Character(DataHandling::Decrypt(urldecode($message->character), getenv('portal_key'), getenv('portal_iv')));
+        $characterName = DataHandling::Decrypt(urldecode($message->character), getenv('portal_key'), getenv('portal_iv'));
+        $character = new Character($characterName);
         $characterData = implode("\n", $character->ToArray());
 
         if (false != realpath('./../backups')) {
@@ -60,13 +62,22 @@ class APIController
                 throw new Exception('Unable to create backup file');
             }
 
-            // Hide the character by setting the AuthId to a negative version of the normal AuthId
+            // Get the owner's AuthId
             $sql = SqlServer::getInstance();
-            $sql->Query(
-                'UPDATE '.getenv('cohdb').'.Ents SET AuthId = ? WHERE Name = ?',
-                array(-$SESSION['account']->GetUID(), $character->Name)
+            $authId = $sql->FetchNumeric(
+                'SELECT AuthId FROM '.getenv('cohdb').'.Ents WHERE Name = ?',
+                array($characterName)
             );
 
+            // Hide the character by setting the AuthId to a negative version of the normal AuthId
+            $sql->Query(
+                'UPDATE '.getenv('cohdb').'.Ents SET AuthId = ? WHERE Name = ?',
+                array(-$authId[0][0], $character->Name)
+            );
+
+            $newResponse = $HttpResponse->withHeader('Content-type', 'text/plain');
+
+            return $newResponse->write('Success');
             //\App\Util\MonoLogger::GetLogger()->info('Wrote '.$backupFile);
         }
     }

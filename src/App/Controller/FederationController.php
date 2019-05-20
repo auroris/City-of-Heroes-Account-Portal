@@ -161,9 +161,13 @@ class FederationController
                 $message = new Message($fedServer['Name']);
                 $message->character = $_SESSION['pullcharacter']['character'];
                 $result = Http::Post($fedServer['Url'].'/api/character/delete', ['message' => json_encode($message)]);
-
-                print_r($result);
+                if ('Success' != $result) {
+                    throw new Exception('Deleting character from the remote server failed.');
+                }
             }
+
+            // Save the char to the DB
+            $character->PutCharacter();
 
             return $this->container->get('renderer')->render($HttpResponse, 'core/page-generic-message.phtml', ['title' => 'Welcome to '.getenv('portal_name'), 'message' => $character->Name.' has been transferred successfully!']);
         } catch (Exception $e) {
