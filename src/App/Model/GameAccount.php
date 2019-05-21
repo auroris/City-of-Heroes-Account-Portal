@@ -23,7 +23,7 @@ class GameAccount
         $this->logger = MonoLogger::GetLogger();
 
         if ('' != $username) {
-            $qAccount = $this->sql->FetchAssoc('SELECT a.account, a.uid, a.last_login, a.last_logout, a.last_ip FROM '.getenv('cohauth').'.user_account a INNER JOIN '.getenv('cohauth').'.user_auth b ON a.account = b.account WHERE UPPER(b.account) = UPPER(?)', array($username));
+            $qAccount = $this->sql->FetchAssoc('SELECT a.account, a.uid, a.last_login, a.last_logout, a.last_ip FROM cohauth.dbo.user_account a INNER JOIN cohauth.dbo.user_auth b ON a.account = b.account WHERE UPPER(b.account) = UPPER(?)', array($username));
             foreach ($qAccount as $row) {
                 $this->username = $row['account'];
                 $this->uid = $row['uid'];
@@ -58,12 +58,12 @@ class GameAccount
         DataHandling::ValidatePassword($password);
 
         // Check username uniqueness
-        if (true === $this->sql->ReturnsRows('SELECT 1 FROM '.getenv('cohauth').'.user_account WHERE UPPER(account) = UPPER(?)', array($username))) {
+        if (true === $this->sql->ReturnsRows('SELECT 1 FROM cohauth.dbo.user_account WHERE UPPER(account) = UPPER(?)', array($username))) {
             throw new Exception('The account name you entered has already been taken.');
         }
 
         // Generate a new account ID and password hash
-        $qNewAccountUID = $this->sql->FetchNumeric('SELECT max(uid) + 1 FROM '.getenv('cohauth').'.user_account');
+        $qNewAccountUID = $this->sql->FetchNumeric('SELECT max(uid) + 1 FROM cohauth.dbo.user_account');
         $uid = $qNewAccountUID[0][0];
 
         if (null == $uid) {
@@ -73,10 +73,10 @@ class GameAccount
         $hash = DataHandling::BinPassword($username, $password);
 
         // SQL statements to execute
-        $sql1 = 'INSERT INTO '.getenv('cohauth').'.user_account (account, uid, forum_id, pay_stat) VALUES (?, ?, ?, 1014)';
-        $sql2 = 'INSERT INTO '.getenv('cohauth').'.user_auth (account, password, salt, hash_type) VALUES (?, CONVERT(BINARY(128),?), 0, 1)';
-        $sql3 = 'INSERT INTO '.getenv('cohauth').'.user_data (uid, user_data) VALUES (?, 0x0080C2E000D00B0C000000000CB40058)';
-        $sql4 = 'INSERT INTO '.getenv('cohauth').'.user_server_group (uid, server_group_id) VALUES (?, 1)';
+        $sql1 = 'INSERT INTO cohauth.dbo.user_account (account, uid, forum_id, pay_stat) VALUES (?, ?, ?, 1014)';
+        $sql2 = 'INSERT INTO cohauth.dbo.user_auth (account, password, salt, hash_type) VALUES (?, CONVERT(BINARY(128),?), 0, 1)';
+        $sql3 = 'INSERT INTO cohauth.dbo.user_data (uid, user_data) VALUES (?, 0x0080C2E000D00B0C000000000CB40058)';
+        $sql4 = 'INSERT INTO cohauth.dbo.user_server_group (uid, server_group_id) VALUES (?, 1)';
 
         // Insert the database data
         try {
@@ -107,7 +107,7 @@ class GameAccount
         $hash = DataHandling::BinPassword($username, $password);
 
         // Verify that the username and password match an account in the database
-        $qAccount = $this->sql->FetchAssoc('SELECT a.account, a.uid, a.last_login, a.last_logout, a.last_ip FROM '.getenv('cohauth').'.user_account a INNER JOIN '.getenv('cohauth').'.user_auth b ON a.account = b.account WHERE UPPER(b.account) = UPPER(?) AND CONVERT(VARCHAR, b.password) = SUBSTRING(?, 1, 30)', array($username, $hash));
+        $qAccount = $this->sql->FetchAssoc('SELECT a.account, a.uid, a.last_login, a.last_logout, a.last_ip FROM cohauth.dbo.user_account a INNER JOIN cohauth.dbo.user_auth b ON a.account = b.account WHERE UPPER(b.account) = UPPER(?) AND CONVERT(VARCHAR, b.password) = SUBSTRING(?, 1, 30)', array($username, $hash));
 
         foreach ($qAccount as $row) {
             $this->username = $row['account'];
@@ -137,7 +137,7 @@ class GameAccount
         $this->wakeup();
 
         $characters = array();
-        $qCharacters = $this->sql->FetchAssoc('SELECT Supergroups.Name AS SupergroupName, Attributes.Name AS ClassName, Attributes_1.Name AS OriginName, Ents.*, Ents2.* FROM '.getenv('cohdb').'.Ents INNER JOIN '.getenv('cohdb').'.Ents2 ON Ents.ContainerId = Ents2.ContainerId INNER JOIN '.getenv('cohdb').'.Attributes ON Ents.Class = Attributes.Id INNER JOIN '.getenv('cohdb').'.Attributes AS Attributes_1 ON Ents.Origin = Attributes_1.Id LEFT OUTER JOIN '.getenv('cohdb').'.Supergroups ON Ents.SupergroupsId = Supergroups.ContainerId WHERE (Ents.AuthName = ?)', array($this->username));
+        $qCharacters = $this->sql->FetchAssoc('SELECT Supergroups.Name AS SupergroupName, Attributes.Name AS ClassName, Attributes_1.Name AS OriginName, Ents.*, Ents2.* FROM cohdb.dbo.Ents INNER JOIN cohdb.dbo.Ents2 ON Ents.ContainerId = Ents2.ContainerId INNER JOIN cohdb.dbo.Attributes ON Ents.Class = Attributes.Id INNER JOIN cohdb.dbo.Attributes AS Attributes_1 ON Ents.Origin = Attributes_1.Id LEFT OUTER JOIN cohdb.dbo.Supergroups ON Ents.SupergroupsId = Supergroups.ContainerId WHERE (Ents.AuthName = ?)', array($this->username));
         foreach ($qCharacters as $row) {
             $row['datauri'] = urlencode(DataHandling::Encrypt($row['Name'], getenv('portal_key'), getenv('portal_iv')));
             array_push($characters, $row);
@@ -156,7 +156,7 @@ class GameAccount
     public function GetPassword()
     {
         $this->wakeup();
-        $qPassword = $this->sql->FetchAssoc('SELECT CONVERT(VARCHAR, password) AS pass FROM '.getenv('cohauth').'.user_auth WHERE UPPER(account) = UPPER(?)', array($this->username));
+        $qPassword = $this->sql->FetchAssoc('SELECT CONVERT(VARCHAR, password) AS pass FROM cohauth.dbo.user_auth WHERE UPPER(account) = UPPER(?)', array($this->username));
 
         return $qPassword[0]['pass'];
     }
@@ -165,7 +165,7 @@ class GameAccount
     {
         $this->wakeup();
 
-        return $this->sql->ReturnsRows('SELECT 1 FROM '.getenv('cohauth').'.user_auth WHERE UPPER(account) = UPPER(?) AND CONVERT(VARCHAR, password) = ?', array($this->username, $hashedPassword));
+        return $this->sql->ReturnsRows('SELECT 1 FROM cohauth.dbo.user_auth WHERE UPPER(account) = UPPER(?) AND CONVERT(VARCHAR, password) = ?', array($this->username, $hashedPassword));
     }
 
     public function GetUID()
@@ -176,7 +176,7 @@ class GameAccount
     public function IsOnline()
     {
         $this->wakeup();
-        $res = $this->sql->FetchNumeric('SELECT count(*) FROM '.getenv('cohdb').'.Ents WHERE AuthName = ? AND Active > 0', array($this->username));
+        $res = $this->sql->FetchNumeric('SELECT count(*) FROM cohdb.dbo.Ents WHERE AuthName = ? AND Active > 0', array($this->username));
 
         return $res[0][0];
     }

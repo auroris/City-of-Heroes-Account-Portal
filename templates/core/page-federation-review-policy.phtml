@@ -8,13 +8,20 @@
         Policy Review
     </div>
     <div class="blockbody">
-        <p>Welcome to {{portal_name}}. Policies implemented by this server may alter characters transferring from {{Server.Name}}. Please review the policy below and click <b>Continue</b> if you still wish to proceed with the transfer.</p>
+        <p>Welcome to {{portal_name}}.
+
+        {% if Server.Policy.AllowIncoming == true %}
+            Policies implemented by this server may alter characters transferring from {{Server.Name}}. Please review the policy below and click <b>Continue</b> if you still wish to proceed with the transfer.</p>
 
         <ul>
             {% if Server.Policy.DeleteOnTransfer == true %}
             <li>Your character will be <b>moved</b> from {{Server.Name}} to {{portal_name}}. This means it will no longer be available on your former server.</li>
             {% else %}
             <li>Your character will be <b>copied</b> from {{Server.Name}}.</li>
+            {% endif %}
+
+            {% if Server.Policy.AllowOutgoing == false %}
+            <li>This transfer is <b>one way</b>. You will not be able to transfer back.</li>
             {% endif %}
 
             {% if Server.Policy.ForceInfluence != -1 %}
@@ -36,7 +43,9 @@
             <table width="100%">
                 <tr>
                     <td>
-                        <input type="button" value="Cancel" onclick="javascript:window.history.go(-1);">
+                        <form method="post" action="{{Server.Url}}/federation/abort-transfer">
+                            <input type="submit" value="Cancel">
+                        </form>
                     </td>
                     <td>
                         <form method="post" action="pull-character">
@@ -46,6 +55,9 @@
                 </tr>
             </table>
         </ul>
+        {% else %}
+            Unfortunately, server transfers are not currently accepted from {{ Server.Name }}.</p>
+        {% endif %}
     </div>
 </div>
 {% endblock %}

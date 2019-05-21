@@ -37,6 +37,7 @@ a:hover {
 
 .littleblock {
   width: 166px;
+  border: solid 1px #0E2640;
 }
 
 .blocktitle {
@@ -92,6 +93,34 @@ div.blockbody label {
   width: 32px;
   height: 32px;
   vertical-align: middle;
+}
+
+div.onlinelist {
+  padding: 0px;
+}
+
+.onlinelist span {
+  margin-left: 8px;
+}
+
+ul.onlinelist,
+ul.onlinelist ul {
+  width: 166px;
+  overflow: hidden;
+  padding: 0;
+  margin: 0;
+  background-image: none;
+  list-style: none;
+}
+
+.onlinelist li div {
+  width: 100%;
+  background-color: #246fb4;
+  padding-left: 8px;
+}
+
+.onlinelist li ul {
+  padding-left: 8px;
 }
 
 .xdebug-error {

@@ -46,7 +46,7 @@ class SunriseController
         $authServer .= '<available value="true" />';
         $authServer .= '</server>';
 
-        $qServer = $this->sql->FetchAssoc('SELECT name, inner_ip FROM '.getenv('cohauth').'.server');
+        $qServer = $this->sql->FetchAssoc('SELECT name, inner_ip FROM cohauth.dbo.server');
         foreach ($qServer as $row) {
             $gameServer .= '<server type="game">';
             $gameServer .= '<name>'.$row['name'].'</name>';
@@ -59,7 +59,7 @@ class SunriseController
             }
 
             // TODO: Query other SQL servers for their data?
-            $qOnline = $this->sql->FetchNumeric('SELECT count(*) FROM '.getenv('cohdb').'.ents WHERE Active > 0');
+            $qOnline = $this->sql->FetchNumeric('SELECT count(*) FROM cohdb.dbo.ents WHERE Active > 0');
 
             $gameServer .= '<players current="'.$qOnline[0][0].'" />';
             $gameServer .= '</server>';

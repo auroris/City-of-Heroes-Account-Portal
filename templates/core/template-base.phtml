@@ -48,14 +48,14 @@
                     <div class="blocktitle">
                         {{online.Count}} Players Online
                     </div>
-                    <div class="blockbody">
+                    <div class="blockbody onlinelist">
                         {% if portal_lfg_only == true %}
-                            {{ online.List|length }} looking for group
+                            <span>{{ online.List|length }} looking for group</span>
                         {% endif %}
 
-                        <ul>
+                        <ul class='onlinelist'>
                         {% for map in online.MapList %}
-                            <li>{{ map }}
+                            <li><div>{{ map }}</div>
                             <ul>
 
                             {% for char in online.List %}

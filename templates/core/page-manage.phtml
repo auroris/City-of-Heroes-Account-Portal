@@ -46,7 +46,7 @@
             <label for="server">Server</label>
             <select name="server">
                 {% for Server in federation %}
-                    {% if Server.Policy.AllowTransfers == true  %}
+                    {% if Server.Policy.AllowOutgoing == true  %}
                         <option value="{{Server.Name}}">{{Server.Name}}</option>
                     {% endif %}
                 {% endfor %}

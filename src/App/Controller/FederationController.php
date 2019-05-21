@@ -36,12 +36,12 @@ class FederationController
 
         // Get the character's ContainerId
         $containerId = $sql->FetchNumeric(
-            'SELECT ContainerId FROM '.getenv('cohdb').'.Ents WHERE Name = ?',
+            'SELECT ContainerId FROM cohdb.dbo.Ents WHERE Name = ?',
             array(DataHandling::Decrypt(urldecode($_POST['character']), getenv('portal_key'), getenv('portal_iv')))
         );
 
         // If the character is locked for transfer already, abort
-        $isLocked = $sql->ReturnsRows('SELECT AccSvrLock FROM '.getenv('cohdb').'.Ents2 WHERE ContainerId = ? AND AccSvrLock IS NOT NULL', array($containerId[0][0]));
+        $isLocked = $sql->ReturnsRows('SELECT AccSvrLock FROM cohdb.dbo.Ents2 WHERE ContainerId = ? AND AccSvrLock IS NOT NULL', array($containerId[0][0]));
         if ($isLocked) {
             return $this->container->get('renderer')->render($HttpResponse, 'core/page-generic-message.phtml', [
                 'title' => 'Character Locked',
@@ -60,7 +60,7 @@ class FederationController
 
         // Lockout the character
         $sql->Query(
-            'UPDATE '.getenv('cohdb').'.Ents2 SET AccSvrLock = ? WHERE ContainerId = ?',
+            'UPDATE cohdb.dbo.Ents2 SET AccSvrLock = ? WHERE ContainerId = ?',
             array(substr('transfer to '.$fedServer['Name'], 0, 72), $containerId[0][0])
         );
 
@@ -153,26 +153,38 @@ class FederationController
                 unset($character->InvRecipeInvention);
             }
 
-            // Put the character into the database
-            //$character->PutCharacter();
+            // If all steps succeeded to this point, complete the transfer
+            $message = new Message($fedServer['Name']);
+            $message->character = $_SESSION['pullcharacter']['character'];
 
-            // If all steps succeeded to this point, apply the delete policy to the foreign server.
+            // Apply the delete policy
             if (true == $fedServer['Policy']['DeleteOnTransfer']) {
-                $message = new Message($fedServer['Name']);
-                $message->character = $_SESSION['pullcharacter']['character'];
                 $result = Http::Post($fedServer['Url'].'/api/character/delete', ['message' => json_encode($message)]);
                 if ('Success' != $result) {
                     throw new Exception('Deleting character from the remote server failed.');
                 }
+            } else {
+                // Inform origin server to remove the lockout
+                Http::Post($fedServer['Url'].'/federation/complete-transfer', ['message' => json_encode($message)]);
             }
 
-            // Save the char to the DB
+            // Put the character into the database
             $character->PutCharacter();
 
             return $this->container->get('renderer')->render($HttpResponse, 'core/page-generic-message.phtml', ['title' => 'Welcome to '.getenv('portal_name'), 'message' => $character->Name.' has been transferred successfully!']);
         } catch (Exception $e) {
             return $this->container->get('renderer')->render($HttpResponse, 'core/page-generic-message.phtml', ['title' => 'An Error was encountered', 'message' => $e->GetMessage()]);
         }
+    }
+
+    public function ClearTransfer(Request $HttpRequest, Response $HttpResponse, array $HttpArgs)
+    {
+        $message = new Message();
+        $message->Unserialize($_POST['message']);
+
+        $sql = SqlServer::getInstance();
+
+        $sql->Query('UPDATE cohdb.dbo.Ents2 set AccSvrLock = null FROM cohdb.dbo.Ents INNER JOIN cohdb.dbo.Ents2 ON Ents.ContainerId = Ents2.ContainerId WHERE Ents.Name = ?', array(DataHandling::Decrypt(urldecode($message->character), getenv('portal_key'), getenv('portal_iv')));
     }
 
     // Find a federation server by its name.

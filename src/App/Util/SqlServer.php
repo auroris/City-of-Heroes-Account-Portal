@@ -38,10 +38,19 @@ class SqlServer
         return $this->conn;
     }
 
+    // Alter SQL queries if the database name is different than expected
+    private function AlterSQL($sql)
+    {
+        $sql = str_replace('cohdb.dbo', getenv('cohdb'), $sql);
+        $sql = str_replace('cohauth.dbo', getenv('cohauth'), $sql);
+
+        return $sql;
+    }
+
     // Returns a numerical array of rows containing an associative array of columns for each row
     public function FetchAssoc($sql, array $vars = [])
     {
-        $query = sqlsrv_query($this->conn, $sql, $vars);
+        $query = sqlsrv_query($this->conn, $this->AlterSQL($sql), $vars);
         if (false === $query) {
             throw new Exception(print_r(sqlsrv_errors(), true));
         }
@@ -57,7 +66,7 @@ class SqlServer
     // Returns a numerical array of rows containing a numerical array of columns for each row
     public function FetchNumeric($sql, array $vars = [])
     {
-        $query = sqlsrv_query($this->conn, $sql, $vars);
+        $query = sqlsrv_query($this->conn, $this->AlterSQL($sql), $vars);
         if (false === $query) {
             throw new Exception(print_r(sqlsrv_errors(), true));
         }
@@ -73,7 +82,7 @@ class SqlServer
     // Return bool (true/false) if the query returns rows. Throws an exception if an error occurs.
     public function ReturnsRows($sql, array $vars = [])
     {
-        $query = sqlsrv_query($this->conn, $sql, $vars);
+        $query = sqlsrv_query($this->conn, $this->AlterSQL($sql), $vars);
         if (false === $query) {
             throw new Exception(print_r(sqlsrv_errors(), true));
         }
@@ -97,7 +106,7 @@ class SqlServer
     // Runs a statement with no return
     public function Query($sql, array $vars = [])
     {
-        $query = sqlsrv_query($this->conn, $sql, $vars);
+        $query = sqlsrv_query($this->conn, $this->AlterSQL($sql), $vars);
         if (false === $query) {
             throw new Exception(print_r(sqlsrv_errors(), true));
         }

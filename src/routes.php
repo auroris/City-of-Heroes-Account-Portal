@@ -58,5 +58,6 @@ return function (App $app) {
         $app->get('/login', FederationController::class.':Login');
         $app->get('/review-policy', FederationController::class.':ReviewPolicy');
         $app->post('/pull-character', FederationController::class.':PullCharacter');
+        $app->post('/clear-transfer', FederationController::class.':ClearTransfer');
     });
 };
