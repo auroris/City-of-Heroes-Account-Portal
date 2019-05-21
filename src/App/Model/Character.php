@@ -41,6 +41,8 @@ class Character
     private function BlacklistEntries()
     {
         unset($this->attributes['Ents2'][0]['AuthUserDataEx']);
+        unset($this->attributes['ENts2'][0]['AccSvrLock']);
+        unset($this->attributes['DbFlags']); // TODO: Hopefully okay
     }
 
     private function ParseResults()
