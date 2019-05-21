@@ -165,7 +165,7 @@ class FederationController
                 }
             } else {
                 // Inform origin server to remove the lockout
-                Http::Post($fedServer['Url'].'/federation/complete-transfer', ['message' => json_encode($message)]);
+                Http::Post($fedServer['Url'].'/federation/complete-transfer', ['character' => $_SESSION['pullcharacter']['character']]);
             }
 
             // Put the character into the database
@@ -179,12 +179,9 @@ class FederationController
 
     public function ClearTransfer(Request $HttpRequest, Response $HttpResponse, array $HttpArgs)
     {
-        $message = new Message();
-        $message->Unserialize($_POST['message']);
-
         $sql = SqlServer::getInstance();
 
-        $sql->Query('UPDATE cohdb.dbo.Ents2 set AccSvrLock = null FROM cohdb.dbo.Ents INNER JOIN cohdb.dbo.Ents2 ON Ents.ContainerId = Ents2.ContainerId WHERE Ents.Name = ?', array(DataHandling::Decrypt(urldecode($message->character), getenv('portal_key'), getenv('portal_iv')));
+        $sql->Query('UPDATE cohdb.dbo.Ents2 set AccSvrLock = null FROM cohdb.dbo.Ents INNER JOIN cohdb.dbo.Ents2 ON Ents.ContainerId = Ents2.ContainerId WHERE Ents.Name = ?', array(DataHandling::Decrypt($_POST['character'], getenv('portal_key'), getenv('portal_iv'))));
     }
 
     // Find a federation server by its name.

@@ -137,7 +137,21 @@ class GameAccount
         $this->wakeup();
 
         $characters = array();
-        $qCharacters = $this->sql->FetchAssoc('SELECT Supergroups.Name AS SupergroupName, Attributes.Name AS ClassName, Attributes_1.Name AS OriginName, Ents.*, Ents2.* FROM cohdb.dbo.Ents INNER JOIN cohdb.dbo.Ents2 ON Ents.ContainerId = Ents2.ContainerId INNER JOIN cohdb.dbo.Attributes ON Ents.Class = Attributes.Id INNER JOIN cohdb.dbo.Attributes AS Attributes_1 ON Ents.Origin = Attributes_1.Id LEFT OUTER JOIN cohdb.dbo.Supergroups ON Ents.SupergroupsId = Supergroups.ContainerId WHERE (Ents.AuthName = ?)', array($this->username));
+        $qCharacters = $this->sql->FetchAssoc('SELECT Supergroups.Name AS SupergroupName, Attributes.Name AS ClassName, Attributes_1.Name AS OriginName, Ents.*, Ents2.* FROM cohdb.dbo.Ents INNER JOIN cohdb.dbo.Ents2 ON Ents.ContainerId = Ents2.ContainerId INNER JOIN cohdb.dbo.Attributes ON Ents.Class = Attributes.Id INNER JOIN cohdb.dbo.Attributes AS Attributes_1 ON Ents.Origin = Attributes_1.Id LEFT OUTER JOIN cohdb.dbo.Supergroups ON Ents.SupergroupsId = Supergroups.ContainerId WHERE (Ents.AuthId = ?) AND Ents2.AccSvrLock IS NULL', array($this->uid));
+        foreach ($qCharacters as $row) {
+            $row['datauri'] = urlencode(DataHandling::Encrypt($row['Name'], getenv('portal_key'), getenv('portal_iv')));
+            array_push($characters, $row);
+        }
+
+        return $characters;
+    }
+
+    public function GetLockedCharacters()
+    {
+        $this->wakeup();
+
+        $characters = array();
+        $qCharacters = $this->sql->FetchAssoc('SELECT Supergroups.Name AS SupergroupName, Attributes.Name AS ClassName, Attributes_1.Name AS OriginName, Ents.*, Ents2.* FROM cohdb.dbo.Ents INNER JOIN cohdb.dbo.Ents2 ON Ents.ContainerId = Ents2.ContainerId INNER JOIN cohdb.dbo.Attributes ON Ents.Class = Attributes.Id INNER JOIN cohdb.dbo.Attributes AS Attributes_1 ON Ents.Origin = Attributes_1.Id LEFT OUTER JOIN cohdb.dbo.Supergroups ON Ents.SupergroupsId = Supergroups.ContainerId WHERE (Ents.AuthId = ?) AND Ents2.AccSvrLock IS NOT NULL', array($this->uid));
         foreach ($qCharacters as $row) {
             $row['datauri'] = urlencode(DataHandling::Encrypt($row['Name'], getenv('portal_key'), getenv('portal_iv')));
             array_push($characters, $row);

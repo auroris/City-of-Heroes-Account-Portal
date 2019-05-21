@@ -48,6 +48,7 @@ class StaticController
             [
                 'username' => $_SESSION['account']->GetUsername(),
                 'characters' => $_SESSION['account']->GetCharacterList(),
+                'lockedcharacters' => $_SESSION['account']->GetLockedCharacters(),
                 'federation' => $GLOBALS['federation'],
                 'maplist' => Maps::$ID,
             ]
