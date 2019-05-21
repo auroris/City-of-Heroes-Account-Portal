@@ -5,13 +5,13 @@ namespace App\Controller;
 use Psr\Container\ContainerInterface;
 use Slim\Http\Request;
 use Slim\Http\Response;
-use App\Model\GameAccount;
 use App\Messages\Message;
-use App\Util\Http;
+use App\Model\GameAccount;
 use App\Model\Character;
+use App\Util\Http;
 use App\Util\SqlServer;
 use App\Util\DataHandling;
-use Exception;
+use App\Util\PortalException;
 
 class FederationController
 {
@@ -91,12 +91,12 @@ class FederationController
     public function ReviewPolicy(Request $HttpRequest, Response $HttpResponse, array $HttpArgs)
     {
         if (!isset($_SESSION['pullcharacter']) || !isset($_SESSION['account'])) {
-            throw new Exception('Your session is not correct or has expired.');
+            throw new PortalException('Your session is not correct or has expired.');
         }
 
         $fedServer = $this->FindFederationServerByName($_SESSION['pullcharacter']['from']);
 
-        return $this->container->get('renderer')->render($HttpResponse, 'core/page-federation-review-policy.phtml', ['Server' => $fedServer]);
+        return $this->container->get('renderer')->render($HttpResponse, 'core/page-federation-review-policy.phtml', ['Server' => $fedServer, 'character' => $_SESSION['pullcharacter']['character']]);
     }
 
     // Pulls the character over and implements all transfer policies.
@@ -104,7 +104,7 @@ class FederationController
     {
         try {
             if (!isset($_SESSION['pullcharacter']) || !isset($_SESSION['account'])) {
-                throw new Exception('Your session is not correct or has expired.');
+                throw new PortalException('Your session is not correct or has expired.');
             }
 
             $fedServer = $this->FindFederationServerByName($_SESSION['pullcharacter']['from']);
@@ -119,7 +119,7 @@ class FederationController
 
             // Apply the AllowTransfers policy
             if (isset($fedServer['Policy']['AllowTransfers']) && false === $fedServer['Policy']['AllowTransfers']) {
-                throw new Exception('Character transfer failed: Policy on this system forbids characters originating on '.$fedServer['Name']);
+                throw new PortalException('Character transfer failed: Policy on this system forbids characters originating on '.$fedServer['Name']);
             }
 
             // Apply the ForceInfluence policy
@@ -161,11 +161,11 @@ class FederationController
             if (true == $fedServer['Policy']['DeleteOnTransfer']) {
                 $result = Http::Post($fedServer['Url'].'/api/character/delete', ['message' => json_encode($message)]);
                 if ('Success' != $result) {
-                    throw new Exception('Deleting character from the remote server failed.');
+                    throw new PortalException('Deleting character from the remote server failed.');
                 }
             } else {
                 // Inform origin server to remove the lockout
-                Http::Post($fedServer['Url'].'/federation/complete-transfer', ['character' => $_SESSION['pullcharacter']['character']]);
+                Http::Post($fedServer['Url'].'/federation/clear-transfer', ['character' => $_SESSION['pullcharacter']['character'], 'skipredirect' => 'true']);
             }
 
             // Put the character into the database
@@ -173,7 +173,7 @@ class FederationController
 
             return $this->container->get('renderer')->render($HttpResponse, 'core/page-generic-message.phtml', ['title' => 'Welcome to '.getenv('portal_name'), 'message' => $character->Name.' has been transferred successfully!']);
         } catch (Exception $e) {
-            return $this->container->get('renderer')->render($HttpResponse, 'core/page-generic-message.phtml', ['title' => 'An Error was encountered', 'message' => $e->GetMessage()]);
+            return $this->container->get('renderer')->render($HttpResponse, 'core/page-generic-message.phtml', ['title' => 'An Error was encountered', 'message' => $e->GetMessage().'<br><pre>'.$e->trace()]);
         }
     }
 
@@ -181,7 +181,15 @@ class FederationController
     {
         $sql = SqlServer::getInstance();
 
-        $sql->Query('UPDATE cohdb.dbo.Ents2 set AccSvrLock = null FROM cohdb.dbo.Ents INNER JOIN cohdb.dbo.Ents2 ON Ents.ContainerId = Ents2.ContainerId WHERE Ents.Name = ?', array(DataHandling::Decrypt($_POST['character'], getenv('portal_key'), getenv('portal_iv'))));
+        $sql->Query('UPDATE cohdb.dbo.Ents2 SET AccSvrLock = null FROM cohdb.dbo.Ents INNER JOIN cohdb.dbo.Ents2 ON Ents.ContainerId = Ents2.ContainerId WHERE Ents.Name = ?', array(DataHandling::Decrypt(urldecode($_POST['character']), getenv('portal_key'), getenv('portal_iv'))));
+
+        if (!isset($_POST['skipredirect'])) {
+            return $HttpResponse->withRedirect(getenv('portal_url').'manage');
+        } else {
+            $newResponse = $HttpResponse->withHeader('Content-type', 'text/plain');
+
+            return $newResponse->write('Success');
+        }
     }
 
     // Find a federation server by its name.
@@ -193,6 +201,6 @@ class FederationController
             }
         }
 
-        throw new Exception('Unable to locate federated server by name: '.$name.'. Please ensure that /src/Config/federation.php has an entry for '.$name.'.');
+        throw new PortalException('Unable to locate federated server by name: '.$name.'. Please ensure that /src/Config/federation.php has an entry for '.$name.'.');
     }
 }

@@ -39,10 +39,10 @@
 {% if lockedcharacters|length > 0 %}
 <div class="block">
     <div class="blocktitle">
-        Characters Locked For Transfer
+        Locked Characters
     </div>
     <div class="blockbody">
-        <p>The following characters are currently locked for pending server transfer. If a transfer has somehow failed, you can unlock them below.</p>
+        <p>The following characters are currently locked for a pending modification or server transfer. Such processes typically take less than a minute. If a character remains locked due to a bug or failure, you can unlock them below.</p>
         <ul>
         {% for character in lockedcharacters %}
             <li>{{character.Name}} - {{character.AccSvrLock}} <form method="Post" action="{{portal_url}}federation/clear-transfer" style="display: inline-block;"><input type="submit" value="Unlock"><input type="hidden" name="character" value="{{character.datauri}}"></form></li>

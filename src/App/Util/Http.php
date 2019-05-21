@@ -2,8 +2,6 @@
 
 namespace App\Util;
 
-use Exception;
-
 class Http
 {
     public static function Get($url)
@@ -15,7 +13,7 @@ class Http
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
         $response = curl_exec($ch);
         if (200 !== curl_getinfo($ch, CURLINFO_HTTP_CODE)) {
-            throw new Exception('An error was encountered when attempting to retrieve '.$url.'<br>curl error code: '.curl_error($ch).'<br>'.$response);
+            throw new PortalException('An error was encountered when attempting to retrieve '.$url.'<br>curl error code: '.curl_error($ch).'<br>'.$response);
         }
         curl_close($ch);
 
@@ -33,7 +31,7 @@ class Http
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
         $response = curl_exec($ch);
         if (200 !== curl_getinfo($ch, CURLINFO_HTTP_CODE)) {
-            throw new Exception('<h1>Error from remote site</h1>'.print_r($response, true));
+            throw new PortalException('Error from remote site\n'.print_r($response, true));
         }
         curl_close($ch);
 

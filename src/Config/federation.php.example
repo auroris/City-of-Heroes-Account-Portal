@@ -4,37 +4,37 @@
 
 $GLOBALS['federation'] = [
     [
-        'Name' => 'Aurora Server', // This must be the same as the server name entry from config.env
-        'Url' => 'http://localhost:8080/Github-City-of-Heroes-Account-Portal/public',
+        'Name' => 'Aurora Server',
+        'Url' => 'http://10.5.0.91/City-of-Heroes-Account-Portal/public/',
         'Policy' => [ // Policy for characters coming from 'Aurora Server'
-            'AllowOutgoing' => false, // Allow characters to transit from here TO 'Aurora Server'
-            'AllowIncoming' => false, // Allow characters to transit from 'Aurora Server' to here
-            'ForceInfluence' => 0, // 0 (or any number) to force inf to that number; -1 to disable and allow whatever the character has
+            'AllowOutgoing' => false, // True to allow characters to transit from here (origin server) to 'Aurora Server' (destination server)
+            'AllowIncoming' => false, // True to allow characters to transit from 'Aurora Server' (origin server) to here
+            'ForceInfluence' => -1, // 0 (or any number) to force inf to that number; -1 to disable and allow whatever the character has
             'ForceAccessLevel' => 0, // 0 (or any number) to force access level to that number; -1 to disable and allow whatever the character has
-            'AllowInventory' => false, // false to delete the inventory, true to allow whatever the character has
-            'ForceDefaultMap' => false, // false to allow user to be on whatever map they were on when they transferred; true to force them to Atlas Park, Mercy Island or Nova Praetoria, depending on their current alignment
-            'DeleteOnTransfer' => true, // true to require characters be deleted when transferring from aurora server to here, false to leave them alone. Deleted characters are exported to the /characterbackups folder.
+            'AllowInventory' => true, // false to delete the inventory, true to allow whatever the character has
+            'ForceDefaultMap' => true, // false to allow user to be on whatever map they were on when they transferred; true to force them to Pocket D
+            'DeleteOnTransfer' => false, // true to require characters be deleted when transferring from origin server to here, false to leave them alone.
         ],
-        'Crypto' => [ // Crypto keys used for any federation member who wants to send a message to us
-            'key' => 'AuroraKey',
-            'iv' => 'AuroraVector',
+        'Crypto' => [ // Configure the same crypto keys with Aurora Server
+            'key' => 'SomeKey',
+            'iv' => 'SomeIV',
         ],
     ],
     [
-        'Name' => 'City Of Heroes Rebirth',
+        'Name' => 'City Of Heroes: Rebirth',
         'Url' => 'https://play.cityofheroesrebirth.com/',
-        'Policy' => [ // Policy for characters coming from CoH Rebirth
-            'AllowOutgoing' => true, // We like characters from Rebirth coming for a visit
-            'AllowIncoming' => true,
-            'ForceInfluence' => -1, // Allow inf to carry over
-            'ForceAccessLevel' => 0, // GM's from Rebirth aren't allowed to be GM's here
-            'AllowInventory' => true, // Allow inventory to carry over
-            'ForceDefaultMap' => false,
-            'DeleteOnTransfer' => true,
+        'Policy' => [ // Policy for characters coming from 'Aurora Server'
+            'AllowOutgoing' => true, // Allow characters to go to Rebirth
+            'AllowIncoming' => true, // Allow Rebirth to com here
+            'ForceInfluence' => -1, // Let them keep their inf
+            'ForceAccessLevel' => 0, // Their GMs aren't allowed to be GMs here.
+            'AllowInventory' => true, // Let them keep their stuff
+            'ForceDefaultMap' => true, // Send visitors to Pocket D
+            'DeleteOnTransfer' => false, // Don't require deletes when coming from Rebirth
         ],
-        'Crypto' => [
-            'key' => 'RebirthKey',
-            'iv' => 'RebirthVector',
+        'Crypto' => [ // This server's entry on Rebirth must have the same crypto keys as below, and vice versa.
+            'key' => 'AnotherKey',
+            'iv' => 'AnotherIV',
         ],
     ],
 ];

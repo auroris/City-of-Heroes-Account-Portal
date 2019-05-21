@@ -43,8 +43,9 @@
             <table width="100%">
                 <tr>
                     <td>
-                        <form method="post" action="{{Server.Url}}/federation/abort-transfer">
+                        <form method="post" action="{{Server.Url}}/federation/clear-transfer">
                             <input type="submit" value="Cancel">
+                            <input type="hidden" name="character" value="{{character}}">
                         </form>
                     </td>
                     <td>
