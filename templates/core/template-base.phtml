@@ -46,11 +46,15 @@
                 <br />
                 <div class="littleblock">
                     <div class="blocktitle">
-                        {{online.Count}} Players Online
+                        {% if portal_lfg_only == true %}
+                            {{ online.List|length }} Players LFG
+                        {% else %}
+                            {{online.Count}} Players Online
+                        {% endif %}
                     </div>
                     <div class="blockbody onlinelist">
                         {% if portal_lfg_only == true %}
-                            <span>{{ online.List|length }} looking for group</span>
+                            <span>{{online.Count}} Players Online</span><br />
                         {% endif %}
 
                         <ul class='onlinelist'>
