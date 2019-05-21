@@ -34,4 +34,16 @@ abstract class BitField
     {
         $this->set($n, false);
     }
+
+    public function __toString()
+    {
+        $refl = new \ReflectionClass(get_class($this));
+        $ret = array();
+
+        foreach ($refl->getConstants() as $key => $value) {
+            $ret[$key] = true === $this->get($value) ? 1 : 0;
+        }
+
+        return print_r($ret, true);
+    }
 }

@@ -11,6 +11,7 @@ use App\Model\Character;
 use App\Util\Http;
 use App\Util\SqlServer;
 use App\Util\DataHandling;
+use App\Bitfield\DBFlag;
 use Exception;
 
 class FederationController
@@ -157,6 +158,11 @@ class FederationController
                 unset($character->InvSalvage0);
                 unset($character->InvRecipeInvention);
             }
+
+            // Apply a character rename token to the character
+            $dbf = new DBFlag($character->DbFlags);
+            $dbf->set($dbf::DBFLAG_RENAMEABLE);
+            $character->DbFlags = $dbf->getValue();
 
             // If all steps succeeded to this point, complete the transfer
             $message = new Message($fedServer['Name']);
