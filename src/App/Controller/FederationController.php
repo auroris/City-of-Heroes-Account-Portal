@@ -11,7 +11,7 @@ use App\Model\Character;
 use App\Util\Http;
 use App\Util\SqlServer;
 use App\Util\DataHandling;
-use App\Util\PortalException;
+use Exception;
 
 class FederationController
 {
@@ -91,7 +91,7 @@ class FederationController
     public function ReviewPolicy(Request $HttpRequest, Response $HttpResponse, array $HttpArgs)
     {
         if (!isset($_SESSION['pullcharacter']) || !isset($_SESSION['account'])) {
-            throw new PortalException('Your session is not correct or has expired.');
+            throw new Exception('Your session is not correct or has expired.');
         }
 
         $fedServer = $this->FindFederationServerByName($_SESSION['pullcharacter']['from']);
@@ -104,7 +104,7 @@ class FederationController
     {
         try {
             if (!isset($_SESSION['pullcharacter']) || !isset($_SESSION['account'])) {
-                throw new PortalException('Your session is not correct or has expired.');
+                throw new Exception('Your session is not correct or has expired.');
             }
 
             $fedServer = $this->FindFederationServerByName($_SESSION['pullcharacter']['from']);
@@ -119,7 +119,7 @@ class FederationController
 
             // Apply the AllowTransfers policy
             if (isset($fedServer['Policy']['AllowTransfers']) && false === $fedServer['Policy']['AllowTransfers']) {
-                throw new PortalException('Character transfer failed: Policy on this system forbids characters originating on '.$fedServer['Name']);
+                throw new Exception('Character transfer failed: Policy on this system forbids characters originating on '.$fedServer['Name']);
             }
 
             // Apply the ForceInfluence policy
@@ -129,9 +129,14 @@ class FederationController
 
             // Apply the ForceAccessLevel policy
             if (isset($fedServer['Policy']['ForceAccessLevel']) && -1 !== $fedServer['Policy']['ForceAccessLevel']) {
-                if (isset($character->AccessLevel)) { //AccessLevel is not currently specified in our exports, so it defaults to null right now
-                    $character->AccessLevel = $fedServer['Policy']['ForceAccessLevel'];
-                }
+                $character->AccessLevel = $fedServer['Policy']['ForceAccessLevel'];
+
+                // Strip some admin bits
+                $dbf = new DBFlag($character->DbFlags);
+                $dbf->clear($dbf::DBFLAG_UNTARGETABLE);
+                $dbf->clear($dbf::DBFLAG_INVINCIBLE);
+                $dbf->clear($dbf::DBFLAG_INVISIBLE);
+                $character->DbFlags = $dbf->getValue();
             }
 
             // Apply the ForceDefaultMap policy
@@ -161,7 +166,7 @@ class FederationController
             if (true == $fedServer['Policy']['DeleteOnTransfer']) {
                 $result = Http::Post($fedServer['Url'].'/api/character/delete', ['message' => json_encode($message)]);
                 if ('Success' != $result) {
-                    throw new PortalException('Deleting character from the remote server failed.');
+                    throw new Exception('Deleting character from the remote server failed.');
                 }
             } else {
                 // Inform origin server to remove the lockout
@@ -201,6 +206,6 @@ class FederationController
             }
         }
 
-        throw new PortalException('Unable to locate federated server by name: '.$name.'. Please ensure that /src/Config/federation.php has an entry for '.$name.'.');
+        throw new Exception('Unable to locate federated server by name: '.$name.'. Please ensure that /src/Config/federation.php has an entry for '.$name.'.');
     }
 }
