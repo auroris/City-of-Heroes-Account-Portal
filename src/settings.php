@@ -5,7 +5,7 @@ $dotenv = Dotenv\Dotenv::create(__DIR__, 'Config/config.env');
 $dotenv->load();
 $dotenv->required(['db_server', 'db_database', 'db_username', 'db_password', 'dbquery',
                     'portal_name', 'portal_url', 'portal_key', 'portal_iv', 'cohauth', 'cohdb',
-                    'portal_lfg_only', 'portal_hide_csr', ]);
+                    'portal_lfg_only', 'portal_hide_csr', 'portal_patchset', ]);
 
 // The Federation's configuration
 require_once __DIR__.'/Config/federation.php';

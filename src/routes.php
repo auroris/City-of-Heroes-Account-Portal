@@ -6,6 +6,7 @@ use App\Controller\GameAccountController;
 use App\Controller\FederationController;
 use App\Controller\APIController;
 use App\Controller\SunriseController;
+use App\Controller\CharacterController;
 use App\Util\MonoLogger;
 
 return function (App $app) {
@@ -24,6 +25,10 @@ return function (App $app) {
         $app->get('/logout', GameAccountController::class.':Logout');
         $app->post('/create', GameAccountController::class.':Create');
         $app->post('/changepassword', GameAccountController::class.':ChangePassword');
+    })->add($container->get('csrf'));
+
+    $app->group('/character', function (App $app) {
+        $app->get('/dev', CharacterController::class.':Dev');
     })->add($container->get('csrf'));
 
     $app->group('/api', function (App $app) {
