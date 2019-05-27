@@ -1,5 +1,8 @@
 body {
-  background: #061d2c url(coh-freedom.jpg) no-repeat center 0;
+  background-color: #fafafa;
+  background-image: url(main_bg_with_characters.jpg), url(main_bg_with_city.jpg);
+  background-position: center 0, center 0;
+  background-repeat: no-repeat, repeat-y;
   font: 13px "Trebuchet MS", Arial, Helvetica;
   color: #FFF;
 }

@@ -11,6 +11,7 @@ class Http
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+        curl_setopt($ch, CURLOPT_USERAGENT, 'cohportal');
         $response = curl_exec($ch);
         if (200 !== curl_getinfo($ch, CURLINFO_HTTP_CODE)) {
             throw new PortalException('An error was encountered when attempting to retrieve '.$url.'<br>curl error code: '.curl_error($ch).'<br>'.$response);
@@ -29,6 +30,7 @@ class Http
         curl_setopt($ch, CURLOPT_POSTFIELDS, $args);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+        curl_setopt($ch, CURLOPT_USERAGENT, 'cohportal');
         $response = curl_exec($ch);
         if (200 !== curl_getinfo($ch, CURLINFO_HTTP_CODE)) {
             throw new PortalException('Error from remote site\n'.print_r($response, true));

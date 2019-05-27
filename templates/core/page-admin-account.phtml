@@ -1,0 +1,138 @@
+{% extends "core/template-base.phtml" %}
+
+{% block title %}Manage Account: {{username}}{% endblock %}
+
+{% block additional_headers %}
+<link rel="stylesheet" type="text/css" href="{{portal_url}}vendor/jquery/jquery-ui.min.css"/>
+<link rel="stylesheet" type="text/css" href="{{portal_url}}vendor/datatables/datatables.min.css"/>
+<link rel="stylesheet" type="text/css" href="{{portal_url}}styles/{{portal_style}}/admin.css" />
+<script type="text/javascript" src="{{portal_url}}vendor/jquery/jquery-3.4.1.min.js"></script>
+<script type="text/javascript" src="{{portal_url}}vendor/jquery/jquery-ui.min.js"></script>
+<script type="text/javascript" src="{{portal_url}}vendor/datatables/datatables.min.js"></script>
+<script type="text/javascript" src="{{portal_url}}vendor/moment/moment.js"></script>
+<script type="text/javascript" src="{{portal_url}}vendor/datatables/datetime-moment.js"></script>
+{% endblock %}
+
+{% block content %}
+<div class="block">
+    <div class="blocktitle">
+        Manage {{username}}
+    </div>
+    <div class="blockbody">
+        <table>
+            <tr>
+                <td><label for="password">Reset Password</label><form method="post" action="{{portal_url}}admin/{{uid}}/password"><input type="password" name="password"><input type="submit" value="Change Password"></form></td>
+            </tr>
+        </table>
+    </div>
+</div>
+
+<div class="block">
+    <div class="blocktitle">
+        Ban Account
+    </div>
+    <div class="blockbody">
+        <table>
+            <tr>
+                <td><label for="password">Ban Expiry</label><form method="post" action="{{portal_url}}admin/{{uid}}/ban"><input type="text" name="date" id="bandate"><input type="submit" value="Ban Account"></form></td>
+            </tr>
+        </table>
+        {% if online %}
+            This person is currently online. Please open the console using your GM character and copy/paste the following command to kick them from the server:
+            <pre>
+svrkick "{{ onlinecharacter}}" You are being banned.
+            </pre>
+        {% endif %}
+    </div>
+</div>
+
+<div class="block">
+    <div class="blocktitle">
+        Characters
+    </div>
+    <div class="blockbody">
+        <table id="character-list" class="display table">
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Name</th>
+                    <th>Location</th>
+                    <th>Level</th>
+                    <th>Exp</th>
+                    <th>Inf</th>
+                    <th>Last Played</th>
+                    <th>Access Level</th>
+                    <th></th>
+                </tr>
+            </thead>
+            {% for character in characters %}
+            <tr>
+                <td>
+                    {{ character.ContainerId}}
+                </td>
+                <td>
+                    {{ character.Name}}
+                </td>
+                <td>
+                    {{ maplist[character.StaticMapId] }}
+                </td>
+                <td>
+                    {{ character.Level + 1 }}
+                </td>
+                <td>
+                    {{ character.ExperiencePoints }}
+                </td>
+                <td>
+                    {{ character.InfluencePoints }}
+                </td>
+                <td>
+                    {{ character.LastPlayed }}
+                </td>
+                <td>
+                    {{ character.AccessLevel }}
+                </td>
+                <td>
+                    <a href="{{portal_url}}admin/{{uid}}/{{character.ContainerId}}"><button>Edit</button></a>
+                </td>
+            </tr>
+            {% endfor %}
+
+            <tfoot>
+                <tr>
+                    <th>Id</th>
+                    <th>Name</th>
+                    <th>Location</th>
+                    <th>Level</th>
+                    <th>Exp</th>
+                    <th>Inf</th>
+                    <th>Last Played</th>
+                    <th>Access Level</th>
+                    <th></th>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+</div>
+
+<script type="text/javascript">
+$( function() {
+    $("#bandate").datepicker();
+});
+
+$.fn.dataTable.moment('MM/DD/YYYY');
+
+$(document).ready(function() {
+    var dt = $('#character-list').DataTable({
+        order: [[1, 'asc']],
+        columnDefs: [
+            { targets: [4, 5],
+                render: function (data, type, row, meta) {
+                    if (data.length == 0) { return '0'; }
+                    return data.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,'); }
+            },
+            { targets: 7, render: function(data, type, row, meta) { return data.length == 0 ? '0' : data; }},
+        ]
+    });
+});
+</script>
+{% endblock %}

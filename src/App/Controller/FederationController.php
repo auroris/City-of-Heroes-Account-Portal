@@ -103,6 +103,8 @@ class FederationController
     // Pulls the character over and implements all transfer policies.
     public function PullCharacter(Request $HttpRequest, Response $HttpResponse, array $HttpArgs)
     {
+        $sql = SqlServer::getInstance();
+
         try {
             if (!isset($_SESSION['pullcharacter']) || !isset($_SESSION['account'])) {
                 throw new Exception('Your session is not correct or has expired.');
@@ -159,10 +161,12 @@ class FederationController
                 unset($character->InvRecipeInvention);
             }
 
-            // Apply a character rename token to the character
-            $dbf = new DBFlag($character->DbFlags);
-            $dbf->set($dbf::DBFLAG_RENAMEABLE);
-            $character->DbFlags = $dbf->getValue();
+            // If rename is required, apply forced rename
+            if ($sql->ReturnsRows('SELECT 1 FROM cohdb.dbo.Ents WHERE Name = ?', array($character->Name))) {
+                $dbf = new DBFlag($character->DbFlags);
+                $dbf->set($dbf::DBFLAG_RENAMEABLE);
+                $character->DbFlags = $dbf->getValue();
+            }
 
             // If all steps succeeded to this point, complete the transfer
             $message = new Message($fedServer['Name']);

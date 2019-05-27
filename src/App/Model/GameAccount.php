@@ -137,7 +137,7 @@ class GameAccount
         $this->wakeup();
 
         $characters = array();
-        $qCharacters = $this->sql->FetchAssoc('SELECT Supergroups.Name AS SupergroupName, Attributes.Name AS ClassName, Attributes_1.Name AS OriginName, Ents.*, Ents2.* FROM cohdb.dbo.Ents INNER JOIN cohdb.dbo.Ents2 ON Ents.ContainerId = Ents2.ContainerId INNER JOIN cohdb.dbo.Attributes ON Ents.Class = Attributes.Id INNER JOIN cohdb.dbo.Attributes AS Attributes_1 ON Ents.Origin = Attributes_1.Id LEFT OUTER JOIN cohdb.dbo.Supergroups ON Ents.SupergroupsId = Supergroups.ContainerId WHERE (Ents.AuthId = ?) AND Ents2.AccSvrLock IS NULL', array($this->uid));
+        $qCharacters = $this->sql->FetchAssoc('SELECT Supergroups.Name AS SupergroupName, Attributes.Name AS ClassName, Attributes_1.Name AS OriginName, CONVERT(varchar, Ents.LastActive, 101) as LastPlayed, Ents.*, Ents2.* FROM cohdb.dbo.Ents INNER JOIN cohdb.dbo.Ents2 ON Ents.ContainerId = Ents2.ContainerId INNER JOIN cohdb.dbo.Attributes ON Ents.Class = Attributes.Id INNER JOIN cohdb.dbo.Attributes AS Attributes_1 ON Ents.Origin = Attributes_1.Id LEFT OUTER JOIN cohdb.dbo.Supergroups ON Ents.SupergroupsId = Supergroups.ContainerId WHERE (Ents.AuthId = ?) AND Ents2.AccSvrLock IS NULL', array($this->uid));
         foreach ($qCharacters as $row) {
             $row['datauri'] = urlencode(DataHandling::Encrypt($row['Name'], getenv('portal_key'), getenv('portal_iv')));
             array_push($characters, $row);
@@ -151,7 +151,7 @@ class GameAccount
         $this->wakeup();
 
         $characters = array();
-        $qCharacters = $this->sql->FetchAssoc('SELECT Supergroups.Name AS SupergroupName, Attributes.Name AS ClassName, Attributes_1.Name AS OriginName, Ents.*, Ents2.* FROM cohdb.dbo.Ents INNER JOIN cohdb.dbo.Ents2 ON Ents.ContainerId = Ents2.ContainerId INNER JOIN cohdb.dbo.Attributes ON Ents.Class = Attributes.Id INNER JOIN cohdb.dbo.Attributes AS Attributes_1 ON Ents.Origin = Attributes_1.Id LEFT OUTER JOIN cohdb.dbo.Supergroups ON Ents.SupergroupsId = Supergroups.ContainerId WHERE (Ents.AuthId = ?) AND Ents2.AccSvrLock IS NOT NULL', array($this->uid));
+        $qCharacters = $this->sql->FetchAssoc('SELECT Supergroups.Name AS SupergroupName, Attributes.Name AS ClassName, Attributes_1.Name AS OriginName, Ents.*, Ents2.* FROM cohdb.dbo.Ents INNER JOIN cohdb.dbo.Ents2 ON Ents.ContainerId = Ents2.ContainerId INNER JOIN cohdb.dbo.Attributes ON Ents.Class = Attributes.Id INNER JOIN cohdb.dbo.Attributes AS Attributes_1 ON Ents.Origin = Attributes_1.Id LEFT OUTER JOIN cohdb.dbo.Supergroups ON Ents.SupergroupsId = Supergroups.ContainerId WHERE (Ents.AuthId = ?) AND Ents2.AccSvrLock LIKE ?', array($this->uid, 'transfer%'));
         foreach ($qCharacters as $row) {
             $row['datauri'] = urlencode(DataHandling::Encrypt($row['Name'], getenv('portal_key'), getenv('portal_iv')));
             array_push($characters, $row);
@@ -190,8 +190,14 @@ class GameAccount
     public function IsOnline()
     {
         $this->wakeup();
-        $res = $this->sql->FetchNumeric('SELECT count(*) FROM cohdb.dbo.Ents WHERE AuthName = ? AND Active > 0', array($this->username));
 
-        return $res[0][0];
+        return $this->sql->ReturnsRows('SELECT 1 FROM cohdb.dbo.Ents WHERE AuthId = ? AND Active > 0', array($this->uid));
+    }
+
+    public function IsAdmin()
+    {
+        $this->wakeup();
+
+        return $this->sql->ReturnsRows('SELECT 1 FROM cohdb.dbo.Ents WHERE AuthId = ? AND AccessLevel >= 10', array($this->uid));
     }
 }

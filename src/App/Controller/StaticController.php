@@ -18,32 +18,32 @@ class StaticController
         $this->container = $container;
     }
 
-    public function Home(Request $request, Response $response, array $args)
+    public function Home(Request $HttpRequest, Response $HttpResponse, array $HttpArgs)
     {
         $gameStats = new \App\Model\CoHStats();
 
-        return $this->container->get('renderer')->render($response, 'core/page-index.phtml', [
+        return $this->container->get('renderer')->render($HttpResponse, 'core/page-index.phtml', [
             'accounts' => $gameStats->CountAccounts(),
             'characters' => $gameStats->CountCharacters(),
             'status' => $gameStats->GetServerStatus(),
         ]);
     }
 
-    public function Create(Request $request, Response $response, array $args)
+    public function Create(Request $HttpRequest, Response $HttpResponse, array $HttpArgs)
     {
-        return $this->container->get('renderer')->render($response, 'core/page-create-account.phtml');
+        return $this->container->get('renderer')->render($HttpResponse, 'core/page-create-account.phtml');
     }
 
-    public function Manage(Request $request, Response $response, array $args)
+    public function Manage(Request $HttpRequest, Response $HttpResponse, array $HttpArgs)
     {
         if (!isset($_SESSION['account'])) {
             $_SESSION['nextpage'] = 'manage';
 
-            return $response->withRedirect('login');
+            return $HttpResponse->withRedirect('login');
         }
 
         return $this->container->get('renderer')->render(
-            $response,
+            $HttpResponse,
             'core/page-manage.phtml',
             [
                 'username' => $_SESSION['account']->GetUsername(),
@@ -55,18 +55,18 @@ class StaticController
         );
     }
 
-    public function Page(Request $request, Response $response, array $args)
+    public function Page(Request $HttpRequest, Response $HttpResponse, array $HttpArgs)
     {
         try {
             return $this->container->get('renderer')->render(
-                $response,
-                $args['page'].'.phtml'
+                $HttpResponse,
+                $HttpArgs['page'].'.phtml'
             );
         } catch (Exception $e) {
             //404'd
             $handler = $this->container->notFoundHandler;
 
-            return $handler($request, $response);
+            return $handler($HttpRequest, $HttpResponse);
         }
     }
 }

@@ -7,6 +7,8 @@ use App\Controller\FederationController;
 use App\Controller\APIController;
 use App\Controller\SunriseController;
 use App\Controller\CharacterController;
+use App\Controller\AdminController;
+use App\Controller\ReportsController;
 use App\Util\MonoLogger;
 
 return function (App $app) {
@@ -33,13 +35,13 @@ return function (App $app) {
 
     $app->group('/api', function (App $app) {
         // CORS headers
-        $app->options('/{routes:.+}', function ($request, $response, $args) {
-            return $response;
+        $app->options('/{routes:.+}', function ($HttpRequest, $HttpResponse, $args) {
+            return $HttpResponse;
         });
         $app->add(function ($req, $res, $next) {
-            $response = $next($req, $res);
+            $HttpResponse = $next($req, $res);
 
-            return $response
+            return $HttpResponse
                     ->withHeader('Access-Control-Allow-Origin', '*')
                     ->withHeader('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Accept, Origin, Authorization')
                     ->withHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
@@ -64,5 +66,14 @@ return function (App $app) {
         $app->get('/review-policy', FederationController::class.':ReviewPolicy');
         $app->post('/pull-character', FederationController::class.':PullCharacter');
         $app->post('/clear-transfer', FederationController::class.':ClearTransfer');
+    });
+
+    $app->group('/admin', function (App $app) {
+        $app->get('/', AdminController::class.':AdminPage');
+        $app->get('/list/account', AdminController::class.':ListAccount');
+        $app->get('/list/character', AdminController::class.':ListCharacter');
+        $app->get('/reports', ReportsController::class.':ListReports');
+        $app->get('/reports/{name}', ReportsController::class.':Report');
+        $app->get('/{uid}', AdminController::class.':AdminAccount');
     });
 };

@@ -32,6 +32,15 @@ return function (App $app) {
         return $view;
     };
 
+    // Error handler
+    $container['errorHandler'] = function ($c) {
+        return new \App\ErrorHandler\GeneralError($c);
+    };
+
+    $container['notFoundHandler'] = function ($c) {
+        return new \App\ErrorHandler\NotFound($c);
+    };
+
     // monolog
     $container['logger'] = function ($c) {
         $settings = $c->get('settings')['logger'];

@@ -7,3 +7,4 @@ federation.php
 /templates/*.phtml
 /backups/*
 !.htaccess
+reports.user.php

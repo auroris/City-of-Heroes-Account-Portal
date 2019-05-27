@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <link rel="shortcut icon" type="image/png" href="{{portal_url}}favicon.ico"/>
     <title>{% block title %}{% endblock %}</title>
-    <link href="{{portal_url}}styles\freedom\style.css" rel="stylesheet" type="text/css" />
+    <link href="{{portal_url}}styles\{{portal_style}}\style.css" rel="stylesheet" type="text/css" />
+    {% block additional_headers %}{% endblock %}
 </head>
 <body>
 <div id="logo"><img src="{{portal_url}}images\ouroborosLogo.png" width="409"></div>

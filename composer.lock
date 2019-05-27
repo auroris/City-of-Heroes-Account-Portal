@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "60d120b69030fa804008d738e1a4e9d6",
+    "content-hash": "2390a60b40fbad2b077a44bc83fa32c5",
     "packages": [
         {
             "name": "container-interop/container-interop",
@@ -271,6 +271,69 @@
             ],
             "description": "PHPMailer is a full-featured email creation and transfer class for PHP",
             "time": "2019-02-01T15:04:28+00:00"
+        },
+        {
+            "name": "phpmyadmin/sql-parser",
+            "version": "5.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/phpmyadmin/sql-parser.git",
+                "reference": "538611d5336e1bd8aea30744dab43289334f1657"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/phpmyadmin/sql-parser/zipball/538611d5336e1bd8aea30744dab43289334f1657",
+                "reference": "538611d5336e1bd8aea30744dab43289334f1657",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.1",
+                "symfony/polyfill-mbstring": "^1.3"
+            },
+            "conflict": {
+                "phpmyadmin/motranslator": "<3.0"
+            },
+            "require-dev": {
+                "phpmyadmin/coding-standard": "^1.0",
+                "phpunit/php-code-coverage": "*",
+                "phpunit/phpunit": "^7.4",
+                "sami/sami": "^4.0"
+            },
+            "suggest": {
+                "ext-mbstring": "For best performance",
+                "phpmyadmin/motranslator": "Translate messages to your favorite locale"
+            },
+            "bin": [
+                "bin/highlight-query",
+                "bin/lint-query",
+                "bin/tokenize-query"
+            ],
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "PhpMyAdmin\\SqlParser\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GPL-2.0-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "The phpMyAdmin Team",
+                    "email": "developers@phpmyadmin.net",
+                    "homepage": "https://www.phpmyadmin.net/team/"
+                }
+            ],
+            "description": "A validating SQL lexer and parser with a focus on MySQL dialect.",
+            "homepage": "https://github.com/phpmyadmin/sql-parser",
+            "keywords": [
+                "analysis",
+                "lexer",
+                "parser",
+                "sql"
+            ],
+            "time": "2019-05-10T00:57:14+00:00"
         },
         {
             "name": "phpoption/phpoption",

@@ -1,0 +1,82 @@
+{% extends "core/template-base.phtml" %}
+
+{% block title %}List of Accounts{% endblock %}
+
+{% block additional_headers %}
+<link rel="stylesheet" type="text/css" href="{{portal_url}}vendor/jquery/jquery-ui.min.css"/>
+<link rel="stylesheet" type="text/css" href="{{portal_url}}vendor/datatables/datatables.min.css"/>
+<link rel="stylesheet" type="text/css" href="{{portal_url}}styles/{{portal_style}}/admin.css" />
+<script type="text/javascript" src="{{portal_url}}vendor/jquery/jquery-3.4.1.min.js"></script>
+<script type="text/javascript" src="{{portal_url}}vendor/jquery/jquery-ui.min.js"></script>
+<script type="text/javascript" src="{{portal_url}}vendor/datatables/datatables.min.js"></script>
+<script type="text/javascript" src="{{portal_url}}vendor/moment/moment.js"></script>
+<script type="text/javascript" src="{{portal_url}}vendor/datatables/datetime-moment.js"></script>
+{% endblock %}
+
+{% block content %}
+<div class="block">
+    <div class="blocktitle">
+        List of Accounts
+    </div>
+    <div class="blockbody">
+        <table id="account-list" class="display table">
+            <thead>
+                <tr>
+                    <th>UID</th>
+                    <th>Account Name</th>
+                    <th>Banned</th>
+                    <th>Ban Expiry</th>
+                    <th>Last Login</th>
+                    <th>Last IP</th>
+                    <th>Inf</th>
+                    <th># Characters</th>
+                    <th>Online Time</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tfoot>
+                <tr>
+                    <th>UID</th>
+                    <th>Account Name</th>
+                    <th>Banned</th>
+                    <th>Ban Expiry</th>
+                    <th>Last Login</th>
+                    <th>Last IP</th>
+                    <th>Inf</th>
+                    <th># Characters</th>
+                    <th>Online Time</th>
+                    <th></th>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+</div>
+
+<script type="text/javascript">
+$.fn.dataTable.moment('MM/DD/YYYY');
+
+$(document).ready(function() {
+    var dt = $('#account-list').DataTable({
+        processing: true,
+        serverSide: true,
+        ajax: "{{portal_url}}admin/list/account",
+        order: [[1, 'asc']],
+        columnDefs: [
+            { targets: 2, render: function (data, type, row, meta) { return data == 0 ? 'No' : 'Yes'; }},
+            { targets: [3, 4, 5, 7], render: function(data, type, row, meta) { return data == null ? '-' : data; }},
+            { targets: 6,
+                render: function (data, type, row, meta) {
+                    if (data === null) { return '-'; }
+                    return data.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,'); }
+            },
+            { targets: 8, width: 75, render: function (data, type, row, meta) { return data == null ? '-' : moment.duration(data, 'seconds').humanize(); }},
+            { targets: 9,
+                render: function (data, type, row, meta) { return "<a href='{{portal_url}}admin/" + row[0] + "'><button>Open</button></a>"; },
+                searchable: false,
+                orderable: false,
+            },
+        ]
+    });
+});
+</script>
+{% endblock %}
