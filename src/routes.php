@@ -71,7 +71,7 @@ return function (App $app) {
     $app->group('/admin', function (App $app) {
         $app->get('/', AdminController::class.':AdminPage');
         $app->get('/list/account', AdminController::class.':ListAccount');
-        $app->get('/list/character', AdminController::class.':ListCharacter');
+        $app->get('/list/character/{uid}', AdminController::class.':ListCharacter');
         $app->get('/reports', ReportsController::class.':ListReports');
         $app->get('/reports/{name}', ReportsController::class.':Report');
         $app->get('/{uid}', AdminController::class.':AdminAccount');

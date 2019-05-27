@@ -6,6 +6,7 @@ use Psr\Container\ContainerInterface;
 use Slim\Http\Request;
 use Slim\Http\Response;
 use App\Model\DataTable;
+use App\Model\GameAccount;
 
 class AdminController
 {
@@ -41,24 +42,50 @@ class AdminController
             	user_account.last_ip as last_ip,
             	char_stats.inf as inf,
             	char_count.num as num_characters,
-            	char_stats.TotalTime as online_time,
+            	case when char_stats.Active is not null then 'Yes' else '-' end as active,
+            	char_stats.TimePlayed as online_time_this_session,
+            	char_stats.TotalTime as online_time_total,
             	NULL as button
             FROM cohauth.dbo.user_account
-            LEFT JOIN (SELECT Ents.AuthId, SUM(Ents.InfluencePoints) as inf, SUM(Ents.TotalTime) as TotalTime FROM cohdb.dbo.Ents GROUP BY Ents.AuthId) char_stats
+            LEFT JOIN (SELECT Ents.AuthId, SUM(Ents.InfluencePoints) as inf, SUM(Ents.TotalTime) as TotalTime, SUM(Ents.Active) as Active, SUM(Ents.TimePlayed) as TimePlayed FROM cohdb.dbo.Ents GROUP BY Ents.AuthId) char_stats
             ON user_account.uid = char_stats.AuthId
             LEFT JOIN (SELECT Ents.AuthId, count(*) as num FROM cohdb.dbo.Ents GROUP BY Ents.AuthId) char_count
             ON user_account.uid = char_count.AuthId")
         ));
     }
 
-    public function ListCharacter(Request $HttpRequest, Response $HttpResponse, array $HttpArgs)
-    {
-        AdminController::VerifyLogin();
-    }
-
     public function AdminAccount(Request $HttpRequest, Response $HttpResponse, array $HttpArgs)
     {
         AdminController::VerifyLogin();
+        $account = new GameAccount($HttpArgs['uid']);
+
+        return $this->container->get('renderer')->render($HttpResponse, 'core/page-admin-account.phtml', [
+            'username' => $account->GetUsername(),
+            'uid' => $account->GetUID(),
+        ]);
+    }
+
+    public function ListCharacter(Request $HttpRequest, Response $HttpResponse, array $HttpArgs)
+    {
+        AdminController::VerifyLogin();
+        $newResponse = $HttpResponse->withHeader('Content-type', 'application/json');
+        $table = new DataTable();
+
+        return $newResponse->write(json_encode(
+            $table->Get('
+            SELECT
+            	Ents.ContainerId,
+            	Ents.Name,
+            	Ents.StaticMapId,
+            	Ents.Level,
+            	Ents.ExperiencePoints,
+            	Ents.InfluencePoints,
+            	convert(varchar, ents.LastActive, 101) as LastActive,
+            	ents.AccessLevel,
+            	null as button
+            FROM cohdb.dbo.ents
+            WHERE AuthId = ?', array($HttpArgs['uid']))
+        ));
     }
 
     public static function VerifyLogin()

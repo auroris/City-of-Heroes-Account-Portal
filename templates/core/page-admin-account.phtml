@@ -65,38 +65,6 @@ svrkick "{{ onlinecharacter}}" You are being banned.
                     <th></th>
                 </tr>
             </thead>
-            {% for character in characters %}
-            <tr>
-                <td>
-                    {{ character.ContainerId}}
-                </td>
-                <td>
-                    {{ character.Name}}
-                </td>
-                <td>
-                    {{ maplist[character.StaticMapId] }}
-                </td>
-                <td>
-                    {{ character.Level + 1 }}
-                </td>
-                <td>
-                    {{ character.ExperiencePoints }}
-                </td>
-                <td>
-                    {{ character.InfluencePoints }}
-                </td>
-                <td>
-                    {{ character.LastPlayed }}
-                </td>
-                <td>
-                    {{ character.AccessLevel }}
-                </td>
-                <td>
-                    <a href="{{portal_url}}admin/{{uid}}/{{character.ContainerId}}"><button>Edit</button></a>
-                </td>
-            </tr>
-            {% endfor %}
-
             <tfoot>
                 <tr>
                     <th>Id</th>
@@ -115,6 +83,11 @@ svrkick "{{ onlinecharacter}}" You are being banned.
 </div>
 
 <script type="text/javascript">
+var maplist = Array();
+{% for map in maplist|keys %}
+maplist[{{map}}] = '{{maplist[map]}}';
+{% endfor %}
+
 $( function() {
     $("#bandate").datepicker();
 });
@@ -123,14 +96,22 @@ $.fn.dataTable.moment('MM/DD/YYYY');
 
 $(document).ready(function() {
     var dt = $('#character-list').DataTable({
+        processing: true,
+        serverSide: true,
+        ajax: "{{portal_url}}admin/list/character/{{uid}}",
         order: [[1, 'asc']],
         columnDefs: [
+            { targets: [2],
+                render: function(data, type, row, meta) {
+                    return maplist[data];
+                }
+            },
             { targets: [4, 5],
                 render: function (data, type, row, meta) {
-                    if (data.length == 0) { return '0'; }
+                    if (data == null) { return '0'; }
                     return data.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,'); }
             },
-            { targets: 7, render: function(data, type, row, meta) { return data.length == 0 ? '0' : data; }},
+            { targets: 7, render: function(data, type, row, meta) { return data == null ? '0' : data; }},
         ]
     });
 });

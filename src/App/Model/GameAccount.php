@@ -17,12 +17,21 @@ class GameAccount
     private $last_login;
     private $last_logout;
 
-    public function __construct($username = '')
+    public function __construct($username)
     {
         $this->sql = SqlServer::getInstance();
         $this->logger = MonoLogger::GetLogger();
 
-        if ('' != $username) {
+        if (is_numeric($username)) {
+            $qAccount = $this->sql->FetchAssoc('SELECT a.account, a.uid, a.last_login, a.last_logout, a.last_ip FROM cohauth.dbo.user_account a INNER JOIN cohauth.dbo.user_auth b ON a.account = b.account WHERE a.uid = ?', array($username));
+            foreach ($qAccount as $row) {
+                $this->username = $row['account'];
+                $this->uid = $row['uid'];
+                $this->last_ip = $row['last_ip'];
+                $this->last_login = $row['last_login'];
+                $this->last_logout = $row['last_logout'];
+            }
+        } elseif (is_string($username) && '' != $username) {
             $qAccount = $this->sql->FetchAssoc('SELECT a.account, a.uid, a.last_login, a.last_logout, a.last_ip FROM cohauth.dbo.user_account a INNER JOIN cohauth.dbo.user_auth b ON a.account = b.account WHERE UPPER(b.account) = UPPER(?)', array($username));
             foreach ($qAccount as $row) {
                 $this->username = $row['account'];

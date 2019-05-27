@@ -5,7 +5,6 @@ namespace App\Controller;
 use Psr\Container\ContainerInterface;
 use Slim\Http\Request;
 use Slim\Http\Response;
-use App\Model\Maps;
 use Exception;
 
 class StaticController
@@ -50,7 +49,6 @@ class StaticController
                 'characters' => $_SESSION['account']->GetCharacterList(),
                 'lockedcharacters' => $_SESSION['account']->GetLockedCharacters(),
                 'federation' => $GLOBALS['federation'],
-                'maplist' => Maps::$ID,
             ]
         );
     }

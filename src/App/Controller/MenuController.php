@@ -42,18 +42,6 @@ class MenuController
         }
 
         $onlineList = $gameStats->GetOnline();
-        $onlineMapList = array();
-
-        foreach (Maps::$ID as $k => $v) {
-            foreach ($onlineList['List'] as $char) {
-                if ($v == $char['MapName'] && !in_array($char['MapName'], $onlineMapList)) {
-                    $onlineMapList[$k] = $v;
-                }
-            }
-        }
-
-        asort($onlineMapList);
-        $onlineList['MapList'] = $onlineMapList;
 
         // In addition to exporting the menu, I also export some common parameters to the template
         return ['portal_name' => getenv('portal_name'),
@@ -62,6 +50,7 @@ class MenuController
                     'menu_tree' => $result,
                     'online' => $onlineList,
                     'portal_lfg_only' => getenv('portal_lfg_only'),
+                    'maplist' => Maps::$ID,
                     ];
     }
 }

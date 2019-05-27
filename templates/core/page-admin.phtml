@@ -19,7 +19,7 @@
         List of Accounts
     </div>
     <div class="blockbody">
-        <table id="account-list" class="display table">
+        <table id="account-list" class="display table" width="1200">
             <thead>
                 <tr>
                     <th>UID</th>
@@ -30,7 +30,9 @@
                     <th>Last IP</th>
                     <th>Inf</th>
                     <th># Characters</th>
-                    <th>Online Time</th>
+                    <th>Online</th>
+                    <th>Online Time (this session)</th>
+                    <th>Online Time (total)</th>
                     <th></th>
                 </tr>
             </thead>
@@ -44,7 +46,9 @@
                     <th>Last IP</th>
                     <th>Inf</th>
                     <th># Characters</th>
-                    <th>Online Time</th>
+                    <th>Online</th>
+                    <th>Online Time (this session)</th>
+                    <th>Online Time (total)</th>
                     <th></th>
                 </tr>
             </tfoot>
@@ -68,8 +72,8 @@ $(document).ready(function() {
                     if (data === null) { return '-'; }
                     return data.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,'); }
             },
-            { targets: 8, width: 75, render: function (data, type, row, meta) { return data == null ? '-' : moment.duration(data, 'seconds').humanize(); }},
-            { targets: 9,
+            { targets: [9,10], width: 75, render: function (data, type, row, meta) { return data == null ? '-' : moment.duration(data, 'seconds').humanize(); }},
+            { targets: 11,
                 render: function (data, type, row, meta) { return "<a href='{{portal_url}}admin/" + row[0] + "'><button>Open</button></a>"; },
                 searchable: false,
                 orderable: false,

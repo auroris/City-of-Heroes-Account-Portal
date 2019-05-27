@@ -21,7 +21,7 @@ class DataTable
         $parser = new Parser($sql);
 
         // Total number of returned records before any filtering
-        $recordsT = $this->sql->FetchNumeric('select count(*) as num from ('.$sql.') as tb');
+        $recordsT = $this->sql->FetchNumeric('select count(*) as num from ('.$sql.') as tb', $params);
         $recordsTotal = $recordsT[0][0];
         $recordsFiltered = $recordsT[0][0];
         $statement = $parser->statements[0];
