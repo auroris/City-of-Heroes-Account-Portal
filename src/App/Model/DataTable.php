@@ -6,25 +6,39 @@ use PhpMyAdmin\SqlParser\Parser;
 use PhpMyAdmin\SqlParser\Components\Condition;
 use PhpMyAdmin\SqlParser\Components\OrderKeyword;
 use PhpMyAdmin\SqlParser\Components\Limit;
+use App\Util\SqlServer;
 
 class DataTable
 {
     protected $sql;
+    protected $params = [];
+    protected $parser;
 
-    public function __construct()
+    public function __construct($query = '', $params = [])
     {
-        $this->sql = \App\Util\SqlServer::getInstance();
+        $this->sql = SqlServer::getInstance();
+
+        $this->parser = new Parser($query);
+        $this->params = $params;
     }
 
-    public function Get($sql, $params = [])
+    public function GetColumns()
     {
-        $parser = new Parser($sql);
+        return $this->sql->FetchNumeric(
+            'SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = ?',
+            array($this->parser->statements[0]->from[0]->table)
+        );
+    }
+
+    public function GetJSON()
+    {
+        $params = $this->params;
+        $statement = $this->parser->statements[0];
 
         // Total number of returned records before any filtering
-        $recordsT = $this->sql->FetchNumeric('select count(*) as num from ('.$sql.') as tb', $params);
+        $recordsT = $this->sql->FetchNumeric('select count(*) as num from ('.$statement->build().') as tb', $this->params);
         $recordsTotal = $recordsT[0][0];
         $recordsFiltered = $recordsT[0][0];
-        $statement = $parser->statements[0];
 
         // Create where clause
         if (isset($_GET['search']) && strlen($_GET['search']['value']) > 0) {
@@ -51,28 +65,28 @@ class DataTable
             $statement->order = new OrderKeyword(($_GET['order'][0]['column'] + 1), 'asc' == $_GET['order'][0]['dir'] ? 'ASC' : 'DESC');
         }
 
-        $sql = $statement->build();
+        $result = $statement->build();
 
         // SQL Server 2012's version of the limit clause
         if (isset($_GET['start']) && is_numeric($_GET['start']) && is_numeric($_GET['length'])) {
-            $sql .= ' OFFSET '.$_GET['start'].' ROWS FETCH NEXT '.$_GET['length'].' ROWS ONLY';
+            $result .= ' OFFSET '.$_GET['start'].' ROWS FETCH NEXT '.$_GET['length'].' ROWS ONLY';
         }
 
         $records = [];
-        $records = $this->sql->FetchNumeric($sql, $params);
+        $records = $this->sql->FetchNumeric($result, $params);
 
         // Tell DataTable that we filtered some records and how many are returned
         if (isset($_GET['search']) && strlen($_GET['search']['value']) > 0) {
             $recordsFiltered = count($records);
         }
 
-        return array(
+        return json_encode(array(
             'draw' => isset($request['draw']) ?
                 intval($request['draw']) :
                 0,
             'recordsTotal' => intval($recordsTotal),
             'recordsFiltered' => intval($recordsFiltered),
             'data' => $records,
-        );
+        ));
     }
 }

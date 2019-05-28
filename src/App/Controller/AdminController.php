@@ -7,6 +7,7 @@ use Slim\Http\Request;
 use Slim\Http\Response;
 use App\Model\DataTable;
 use App\Model\GameAccount;
+use Exception;
 
 class AdminController
 {
@@ -29,10 +30,7 @@ class AdminController
     {
         AdminController::VerifyLogin();
         $newResponse = $HttpResponse->withHeader('Content-type', 'application/json');
-        $table = new DataTable();
-
-        return $newResponse->write(json_encode(
-            $table->Get("
+        $table = new DataTable("
             SELECT
             	user_account.uid as uid,
             	user_account.account as account_name,
@@ -50,8 +48,9 @@ class AdminController
             LEFT JOIN (SELECT Ents.AuthId, SUM(Ents.InfluencePoints) as inf, SUM(Ents.TotalTime) as TotalTime, SUM(Ents.Active) as Active, SUM(Ents.TimePlayed) as TimePlayed FROM cohdb.dbo.Ents GROUP BY Ents.AuthId) char_stats
             ON user_account.uid = char_stats.AuthId
             LEFT JOIN (SELECT Ents.AuthId, count(*) as num FROM cohdb.dbo.Ents GROUP BY Ents.AuthId) char_count
-            ON user_account.uid = char_count.AuthId")
-        ));
+            ON user_account.uid = char_count.AuthId");
+
+        return $newResponse->write($table->GetJSON());
     }
 
     public function AdminAccount(Request $HttpRequest, Response $HttpResponse, array $HttpArgs)
@@ -69,10 +68,7 @@ class AdminController
     {
         AdminController::VerifyLogin();
         $newResponse = $HttpResponse->withHeader('Content-type', 'application/json');
-        $table = new DataTable();
-
-        return $newResponse->write(json_encode(
-            $table->Get('
+        $table = new DataTable('
             SELECT
             	Ents.ContainerId,
             	Ents.Name,
@@ -84,8 +80,9 @@ class AdminController
             	ents.AccessLevel,
             	null as button
             FROM cohdb.dbo.ents
-            WHERE AuthId = ?', array($HttpArgs['uid']))
-        ));
+            WHERE AuthId = ?', array($HttpArgs['uid']));
+
+        return $newResponse->write($table->GetJSON());
     }
 
     public static function VerifyLogin()

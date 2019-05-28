@@ -1,0 +1,55 @@
+{% extends "core/template-base.phtml" %}
+
+{% block title %}Manage Account: {{username}}{% endblock %}
+
+{% block additional_headers %}
+<link rel="stylesheet" type="text/css" href="{{portal_url}}vendor/jquery/jquery-ui.min.css"/>
+<link rel="stylesheet" type="text/css" href="{{portal_url}}vendor/datatables/datatables.min.css"/>
+<link rel="stylesheet" type="text/css" href="{{portal_url}}styles/{{portal_style}}/admin.css" />
+<script type="text/javascript" src="{{portal_url}}vendor/jquery/jquery-3.4.1.min.js"></script>
+<script type="text/javascript" src="{{portal_url}}vendor/jquery/jquery-ui.min.js"></script>
+<script type="text/javascript" src="{{portal_url}}vendor/datatables/datatables.min.js"></script>
+<script type="text/javascript" src="{{portal_url}}vendor/moment/moment.js"></script>
+<script type="text/javascript" src="{{portal_url}}vendor/datatables/datetime-moment.js"></script>
+{% endblock %}
+
+{% block content %}
+<div class="block">
+    <div class="blocktitle">
+        Reports
+    </div>
+    <div class="blockbody">
+        <table id="reports-list" class="display table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Description</th>
+                    <th></th>
+                </tr>
+            </thead>
+            {% for report in reports|keys %}
+            <tr>
+                <td>{{report}}</td>
+                <td>{{reports[report].description}}</td>
+                <td><a href="{{portal_url}}admin/reports/{{report}}"><button>Open</button></a></td>
+            </tr>
+            {% endfor %}
+            <tfoot>
+                <tr>
+                    <th>Name</th>
+                    <th>Description</th>
+                    <th></th>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+</div>
+
+<script type="text/javascript">
+$(document).ready(function() {
+    var dt = $('#reports-list').DataTable({
+        order: [[0, 'asc']],
+    });
+});
+</script>
+{% endblock %}
