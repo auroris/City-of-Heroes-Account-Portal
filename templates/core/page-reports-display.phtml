@@ -21,18 +21,34 @@
         Report {{title}}
     </div>
     <div class="blockbody">
-        <form method="get">
-            <select id="account" name="account" data-placeholder="Choose an account" class="chosen-select">
-                {% for row in accounts %}
-                    <option value="{{ row[0] }}">{{ row[1] }}</option>
-                {% endfor %}
-            </select>
-            <select id="character" name="character" data-placeholder="Choose a character" class="chosen-select">
-                {% for row in characters %}
-                    <option value="{{ row[0] }}">{{ row[1] }}</option>
-                {% endfor %}
-            </select>
-        </form>
+        <form id="options" method="get">
+            {% if accounts|length > 0 %}
+                <label for="account">Account</label>
+                <select id="account" name="account" data-placeholder="Choose an account" class="chosen-select">
+                    <option value="null"></option>
+                    {% for row in accounts %}
+                        {% if row[0] == account %}
+                            <option value="{{ row[0] }}" SELECTED>{{ row[1] }}</option>
+                        {% else %}
+                            <option value="{{ row[0] }}">{{ row[1] }}</option>
+                        {% endif %}
+                    {% endfor %}
+                </select>
+            {% endif %}
+            {% if characters|length > 0 %}
+                <label for="character">Character</label>
+                <select id="character" name="character" data-placeholder="Choose a character" class="chosen-select">
+                    <option value="null"></option>
+                    {% for row in characters %}
+                        {% if row[0] == character %}
+                            <option value="{{ row[0] }}" SELECTED>{{ row[1] }}</option>
+                        {% else %}
+                            <option value="{{ row[0] }}">{{ row[1] }}</option>
+                        {% endif %}
+                    {% endfor %}
+                </select>
+            {% endif %}
+        </form><hr />
         <table id="reports-list" class="display table">
             <thead>
                 <tr>
@@ -44,7 +60,7 @@
             {% for row in results %}
             <tr>
                 {% for col in row %}
-                    <td>{{col}}</td>
+                    <td>{{col|raw}}</td>
                 {% endfor %}
             </tr>
             {% endfor %}
@@ -56,11 +72,22 @@
                 </tr>
             </tfoot>
         </table>
+
+        {% if results|length == 0 %}
+            No data found.
+        {% endif %}
     </div>
 </div>
 
 <script type="text/javascript">
-$(".chosen-select").chosen({disable_search_threshold: 10});
+$(".chosen-select").chosen({disable_search_threshold: 10, width: "220px"});
+$("#account").chosen().change(function() {
+    $("#character").val('null');
+    $('#options').submit();
+});
+$("#character").chosen().change(function() {
+    $('#options').submit();
+});
 
 $(document).ready(function() {
     var dt = $('#reports-list').DataTable({
