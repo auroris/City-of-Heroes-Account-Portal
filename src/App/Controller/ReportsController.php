@@ -22,7 +22,6 @@ class ReportsController
         AdminController::VerifyLogin($HttpResponse);
 
         include $GLOBALS['ROOT'].'/config/reports.default.php';
-
         $file = $GLOBALS['ROOT'].'/config/reports.user.php';
         file_exists($file) and include $file;
 
@@ -32,41 +31,75 @@ class ReportsController
     // Replacement strings: '@ACCOUNT_NAME', '@CHARACTER_NAME', '@ACCOUNT_UID', '@CHARACTER_CID'
     public function Report(Request $HttpRequest, Response $HttpResponse, array $HttpArgs)
     {
+        // Check permission
         AdminController::VerifyLogin($HttpResponse);
 
+        // Includes
         include $GLOBALS['ROOT'].'/config/reports.default.php';
-
         $file = $GLOBALS['ROOT'].'/config/reports.user.php';
         file_exists($file) and include $file;
 
-        $query = $reports[$HttpArgs['name']]['sql'];
-
-        if (false !== strpos($query, '@ACCOUNT_NAME')) {
-            $query = "DECLARE @ACCOUNT_NAME VARCHAR(MAXLEN) = 'auroris';".$query;
-        }
-
-        if (false !== strpos($query, '@ACCOUNT_UID')) {
-            $query = 'DECLARE @ACCOUNT_UID INT = 3;'.$query;
-        }
-
-        if (false !== strpos($query, '@CHARACTER_NAME')) {
-            $query = "DECLARE @ACCOUNT_NAME VARCHAR(MAXLEN) = 'Aleena';".$query;
-        }
-
-        if (false !== strpos($query, '@CHARACTER_CID')) {
-            $query = 'DECLARE @CHARACTER_CID INT = 4;'.$query;
-        }
-
+        // Define vars
         $sql = SqlServer::GetInstance();
-        $results = $sql->FetchAssoc($query);
+        $query = $reports[$HttpArgs['name']]['sql'];
+        $accounts = [];
+        $characters = [];
+        $params = [];
+
+        if (false !== strpos($query, '@ACCOUNT_NAME') || false !== strpos($query, '@ACCOUNT_UID')) {
+            $accounts = $sql->FetchNumeric('SELECT user_account.uid as uid, user_account.account as account_name FROM cohauth.dbo.user_account ORDER BY account');
+
+            if (false !== strpos($query, '@ACCOUNT_NAME')) {
+                foreach ($accounts as $row) {
+                    if ($row[0] == $_GET['account']) {
+                        $query = 'DECLARE @ACCOUNT_NAME VARCHAR(MAXLEN) = ?;'.$query;
+                        array_push($params, $row[1]);
+                    }
+                }
+            }
+
+            if (false !== strpos($query, '@ACCOUNT_UID')) {
+                $query = 'DECLARE @ACCOUNT_UID INT = ?;'.$query;
+                array_push($params, $_GET['account']);
+            }
+        }
+
+        if (false !== strpos($query, '@CHARACTER_NAME') || false !== strpos($query, '@CHARACTER_CID')) {
+            if (isset($_GET['account'])) {
+                $characters = $sql->FetchNumeric('SELECT Ents.ContainerId, Ents.Name FROM cohdb.dbo.Ents ORDER BY Name WHERE AuthId = ?', array($_GET['account']));
+            }
+
+            if (false !== strpos($query, '@CHARACTER_NAME')) {
+                foreach ($characters as $row) {
+                    if ($row[0] == $_GET['character']) {
+                        $query = 'DECLARE @ACCOUNT_NAME VARCHAR(MAXLEN) = ?;'.$query;
+                        array_push($params, $row[1]);
+                    }
+                }
+            }
+
+            if (false !== strpos($query, '@CHARACTER_CID')) {
+                $query = 'DECLARE @CHARACTER_CID INT = ?;'.$query;
+                array_push($params, $_GET['character']);
+            }
+        }
+
+        $results = $sql->FetchAssoc($query, $params);
 
         if (isset($reports[$HttpArgs['name']]['transpose']) && true == $reports[$HttpArgs['name']]['transpose']) {
             $results = $this->Transpose($results);
         }
 
-        return $this->container->get('renderer')->render($HttpResponse, 'core/page-reports-display.phtml', ['reports' => $reports, 'results' => $results, 'title' => $HttpArgs['name']]);
+        return $this->container->get('renderer')->render($HttpResponse, 'core/page-reports-display.phtml', [
+            'reports' => $reports,
+            'results' => $results,
+            'title' => $HttpArgs['name'],
+            'accounts' => $accounts,
+            'characters' => $characters,
+        ]);
     }
 
+    // Manual pivot, when you don't want to make SQL Server do 415 column pivots (looking at you, salvage tables)
     private function Transpose($assocArray)
     {
         $keys = array_keys($assocArray[0]);
@@ -74,19 +107,15 @@ class ReportsController
 
         // Set up the first column
         for ($col = 1; $col < count($keys); ++$col) {
-            $transposed[$col] = [$keys[0] => $keys[$col]];
+            $transposed[$col - 1] = [$keys[0] => $keys[$col]];
         }
 
+        // Do additional columns
         for ($col = 1; $col < count($keys); ++$col) {
             for ($row = 0; $row < count($assocArray); ++$row) {
-                $transposed[$col][$assocArray[$row][$keys[0]]] = $assocArray[$row][$keys[$col]];
+                $transposed[$col - 1][$assocArray[$row][$keys[0]]] = $assocArray[$row][$keys[$col]];
             }
         }
-
-        //print_r($assocArray[0][$keys[0]]);
-
-        //print_r($transposed);
-        //die();
 
         return $transposed;
     }

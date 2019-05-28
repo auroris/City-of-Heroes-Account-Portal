@@ -5,12 +5,14 @@
 {% block additional_headers %}
 <link rel="stylesheet" type="text/css" href="{{portal_url}}vendor/jquery/jquery-ui.min.css"/>
 <link rel="stylesheet" type="text/css" href="{{portal_url}}vendor/datatables/datatables.min.css"/>
+<link rel="stylesheet" type="text/css" href="{{portal_url}}vendor/chosen/chosen.min.css"/>
 <link rel="stylesheet" type="text/css" href="{{portal_url}}styles/{{portal_style}}/admin.css" />
 <script type="text/javascript" src="{{portal_url}}vendor/jquery/jquery-3.4.1.min.js"></script>
 <script type="text/javascript" src="{{portal_url}}vendor/jquery/jquery-ui.min.js"></script>
 <script type="text/javascript" src="{{portal_url}}vendor/datatables/datatables.min.js"></script>
 <script type="text/javascript" src="{{portal_url}}vendor/moment/moment.js"></script>
 <script type="text/javascript" src="{{portal_url}}vendor/datatables/datetime-moment.js"></script>
+<script type="text/javascript" src="{{portal_url}}vendor/chosen/chosen.jquery.min.js"></script>
 {% endblock %}
 
 {% block content %}
@@ -19,6 +21,18 @@
         Report {{title}}
     </div>
     <div class="blockbody">
+        <form method="get">
+            <select id="account" name="account" data-placeholder="Choose an account" class="chosen-select">
+                {% for row in accounts %}
+                    <option value="{{ row[0] }}">{{ row[1] }}</option>
+                {% endfor %}
+            </select>
+            <select id="character" name="character" data-placeholder="Choose a character" class="chosen-select">
+                {% for row in characters %}
+                    <option value="{{ row[0] }}">{{ row[1] }}</option>
+                {% endfor %}
+            </select>
+        </form>
         <table id="reports-list" class="display table">
             <thead>
                 <tr>
@@ -46,6 +60,8 @@
 </div>
 
 <script type="text/javascript">
+$(".chosen-select").chosen({disable_search_threshold: 10});
+
 $(document).ready(function() {
     var dt = $('#reports-list').DataTable({
     });
