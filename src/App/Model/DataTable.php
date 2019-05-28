@@ -45,7 +45,7 @@ class DataTable
             $whereClause = '';
             $i = 0;
 
-            foreach ($parser->statements[0]->expr as $column_description) {
+            foreach ($statement->expr as $column_description) {
                 if (isset($column_description->column)) {
                     if ($i > 0) {
                         $whereClause .= ' OR';
