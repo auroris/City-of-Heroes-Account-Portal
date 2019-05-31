@@ -15,12 +15,19 @@ class SqlServer
             $this->conn = sqlsrv_connect(getenv('db_server'), array(
                 'Database' => getenv('db_database'),
                 'Uid' => getenv('db_username'),
-                'PWD' => getenv('db_password'), ));
+                'PWD' => getenv('db_password'),
+                'APP' => getenv('portal_name'),
+                'WSID' => preg_replace('/[^a-zA-Z0-9\.-]+/', '', $_SERVER['HTTP_HOST']),
+                'ConnectionPooling' => true,
+                'LoginTimeout' => 5, // seconds
+                ));
             if (false == $this->conn) {
-                die("<pre>Error connecting to '".getenv('db_server')."' with username '".getenv('db_username').'"'."\n\n".print_r(sqlsrv_errors(), true));
+                throw new Exception("Error connecting to '".getenv('db_server')."' with username '".getenv('db_username').'"'."\n\n".print_r(sqlsrv_errors(), true));
             }
         } catch (Exception $e) {
-            die("<pre>An exception was thrown while connecting to '".getenv('db_server')."' with username '".getenv('db_username').'"'."\n\n".print_r($e, true));
+            MonoLogger::GetLogger()->Error($e->getMessage());
+            echo 'There was a problem connecting to the SQL server. More information is available in the logs.';
+            die();
         }
     }
 
@@ -50,7 +57,7 @@ class SqlServer
     // Returns a numerical array of rows containing an associative array of columns for each row
     public function FetchAssoc($sql, array $vars = [])
     {
-        $query = sqlsrv_query($this->conn, $this->AlterSQL($sql), $vars);
+        $query = sqlsrv_query($this->conn, $this->AlterSQL($sql), $vars, array('QueryTimeout' => 5));
         if (false === $query) {
             throw new Exception(print_r(sqlsrv_errors(), true));
         }
@@ -66,7 +73,7 @@ class SqlServer
     // Returns a numerical array of rows containing a numerical array of columns for each row
     public function FetchNumeric($sql, array $vars = [])
     {
-        $query = sqlsrv_query($this->conn, $this->AlterSQL($sql), $vars);
+        $query = sqlsrv_query($this->conn, $this->AlterSQL($sql), $vars, array('QueryTimeout' => 5));
         if (false === $query) {
             throw new Exception(print_r(sqlsrv_errors(), true));
         }
@@ -82,7 +89,7 @@ class SqlServer
     // Return bool (true/false) if the query returns rows. Throws an exception if an error occurs.
     public function ReturnsRows($sql, array $vars = [])
     {
-        $query = sqlsrv_query($this->conn, $this->AlterSQL($sql), $vars);
+        $query = sqlsrv_query($this->conn, $this->AlterSQL($sql), $vars, array('QueryTimeout' => 5));
         if (false === $query) {
             throw new Exception(print_r(sqlsrv_errors(), true));
         }

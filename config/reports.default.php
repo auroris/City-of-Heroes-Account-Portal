@@ -55,3 +55,10 @@ SELECT TOP 10
 	ents.AccessLevel,
 	null as button
 FROM cohdb.dbo.ents ORDER BY Ents.InfluencePoints Desc';
+
+$reports['AuditAdmins']['description'] = 'Administrative characters audit.';
+$reports['AuditsAdmins']['sql'] = '
+SELECT Ents.Name, Ents.AuthName, Ents.AccessLevel
+FROM cohdb.dbo.Ents
+WHERE Ents.AccessLevel > 0
+ORDER BY Ents.AuthName, Ents.Name';

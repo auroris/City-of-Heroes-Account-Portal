@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Model\CoHStats;
 use App\Model\MenuItem;
 use App\Model\Maps;
+use Exception;
 
 class MenuController
 {
@@ -41,7 +42,11 @@ class MenuController
             array_push($result, $item->GetMenu());
         }
 
-        $onlineList = $gameStats->GetOnline();
+        $onlineList = [];
+        try {
+            $onlineList = $gameStats->GetOnline();
+        } catch (Exception $e) {
+        }
 
         // In addition to exporting the menu, I also export some common parameters to the template
         return ['portal_name' => getenv('portal_name'),
