@@ -57,7 +57,7 @@ SELECT TOP 10
 FROM cohdb.dbo.ents ORDER BY Ents.InfluencePoints Desc';
 
 $reports['AuditAdmins']['description'] = 'Administrative characters audit.';
-$reports['AuditsAdmins']['sql'] = '
+$reports['AuditAdmins']['sql'] = '
 SELECT Ents.Name, Ents.AuthName, Ents.AccessLevel
 FROM cohdb.dbo.Ents
 WHERE Ents.AccessLevel > 0
