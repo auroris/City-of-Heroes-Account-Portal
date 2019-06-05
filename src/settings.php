@@ -5,7 +5,7 @@ $dotenv = Dotenv\Dotenv::create(__DIR__, '/../config/config.env');
 $dotenv->load();
 $dotenv->required(['db_server', 'db_database', 'db_username', 'db_password', 'dbquery',
                     'portal_name', 'portal_url', 'portal_key', 'portal_iv', 'cohauth', 'cohdb',
-                    'portal_lfg_only', 'portal_hide_csr', 'portal_patchset', 'email_username', 'email_password', 'portal_use', 'portal_style', 'user_data', ]);
+                    'portal_lfg_only', 'portal_hide_csr', 'portal_patchset', 'email_username', 'email_password', 'portal_error_reporting', 'portal_style', 'user_data', ]);
 
 // App root dir:
 $GLOBALS['ROOT'] = __DIR__.'/..';
@@ -22,7 +22,7 @@ PhpMyAdmin\SqlParser\Context::setMode('MSSQL');
 // Slim PHP settings
 return [
     'settings' => [
-        'displayErrorDetails' => ('dev' == getenv('portal_use') ? true : false),
+        'displayErrorDetails' => ('dev' == getenv('portal_error_reporting') ? true : false),
         'addContentLengthHeader' => false, // Allow the web server to send the content-length header
         'determineRouteBeforeAppMiddleware' => true,
 
