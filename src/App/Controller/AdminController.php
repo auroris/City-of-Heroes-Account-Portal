@@ -40,7 +40,7 @@ class AdminController
                 user_account.last_ip as last_ip,
                 char_stats.inf as inf,
                 char_count.num as num_characters,
-                case when char_stats.Active is not null then 'Yes' else '-' end as active,
+                case when char_stats.Active > 0 then 'Yes' else '-' end as active,
                 char_stats.TimePlayed as online_time_this_session,
                 char_stats.TotalTime as online_time_total,
                 NULL as button

@@ -9,7 +9,7 @@ A PHP application to allow users to create their own accounts and change their p
 
 # Setup Guide
 
-* Install [XAMPP 7.3.4](https://www.apachefriends.org/index.html). Install it into the default suggested directory `C:\xampp`. De-select all options except for Apache (unless you need them for other things you need the server to do).
+* Install [XAMPP 7.3.4](https://www.apachefriends.org/index.html) (or greater). Install it into the default suggested directory `C:\xampp`. De-select all options except for Apache (unless you need them for other things you need the server to do).
 
 * Install the [Microsoft PHP drivers for SQL Server](https://www.microsoft.com/en-us/download/details.aspx?id=57916). If you installed XAMPP into the default location, the path you want to give the installer is `C:\xampp\php\ext`.
 
@@ -38,6 +38,13 @@ Website content can be found in the `\templates` directory. Rename the .example 
 * create.phtml is displayed as text above the create your account form. Use this for EULA, rules, etc.
 * index.phtml lets you customize your main index page. If you do not have this file, a default server status message will be displayed instead.
 * menuitems.phtml allows you to add additional menu items to the bottom of the main menu.
+
+# Upgrade Guide
+
+I've changed a lot of things in the portal. Here's some major things that might trip you up:
+* I moved \App\Config to \Config.
+* I've added a lot of items to config.env, check config.env.example to see what's new.
+* Remember to run `php composer.phar install` to get new required libraries.
 
 # Support
 
