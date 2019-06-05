@@ -84,7 +84,7 @@ class GameAccount
         // SQL statements to execute
         $sql1 = 'INSERT INTO cohauth.dbo.user_account (account, uid, forum_id, pay_stat) VALUES (?, ?, ?, 1014)';
         $sql2 = 'INSERT INTO cohauth.dbo.user_auth (account, password, salt, hash_type) VALUES (?, CONVERT(BINARY(128),?), 0, 1)';
-        $sql3 = 'INSERT INTO cohauth.dbo.user_data (uid, user_data) VALUES (?, 0x0080C2E000D00B0C000000000CB40058)';
+        $sql3 = 'INSERT INTO cohauth.dbo.user_data (uid, user_data) VALUES (?, '.getenv('user_data').')';
         $sql4 = 'INSERT INTO cohauth.dbo.user_server_group (uid, server_group_id) VALUES (?, 1)';
 
         // Insert the database data

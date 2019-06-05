@@ -32,20 +32,20 @@ class AdminController
         $newResponse = $HttpResponse->withHeader('Content-type', 'application/json');
         $table = new DataTable("
             SELECT
-            	user_account.uid as uid,
-            	user_account.account as account_name,
-            	case when user_account.block_flag = 0 then 'No' else 'Yes' end as banned,
-            	convert(varchar, user_account.block_end_date, 101) as ban_expiry,
-            	convert(varchar, user_account.last_login, 101) as last_login,
-            	user_account.last_ip as last_ip,
-            	char_stats.inf as inf,
-            	char_count.num as num_characters,
-            	case when char_stats.Active is not null then 'Yes' else '-' end as active,
-            	char_stats.TimePlayed as online_time_this_session,
-            	char_stats.TotalTime as online_time_total,
-            	NULL as button
+                user_account.uid as uid,
+                user_account.account as account_name,
+                case when user_account.block_flag = 0 then 'No' else 'Yes' end as banned,
+                convert(varchar, user_account.block_end_date, 101) as ban_expiry,
+                convert(varchar, user_account.last_login, 101) as last_login,
+                user_account.last_ip as last_ip,
+                char_stats.inf as inf,
+                char_count.num as num_characters,
+                case when char_stats.Active is not null then 'Yes' else '-' end as active,
+                char_stats.TimePlayed as online_time_this_session,
+                char_stats.TotalTime as online_time_total,
+                NULL as button
             FROM cohauth.dbo.user_account
-            LEFT JOIN (SELECT Ents.AuthId, SUM(Ents.InfluencePoints) as inf, SUM(Ents.TotalTime) as TotalTime, SUM(Ents.Active) as Active, SUM(Ents.TimePlayed) as TimePlayed FROM cohdb.dbo.Ents GROUP BY Ents.AuthId) char_stats
+            LEFT JOIN (SELECT Ents.AuthId, SUM(ISNULL(Ents.InfluencePoints, 0)) as inf, SUM(ISNULL(Ents.TotalTime, 0)) as TotalTime, SUM(ISNULL(Ents.Active, 0)) as Active, SUM(ISNULL(Ents.TimePlayed, 0)) as TimePlayed FROM cohdb.dbo.Ents GROUP BY Ents.AuthId) char_stats
             ON user_account.uid = char_stats.AuthId
             LEFT JOIN (SELECT Ents.AuthId, count(*) as num FROM cohdb.dbo.Ents GROUP BY Ents.AuthId) char_count
             ON user_account.uid = char_count.AuthId");
