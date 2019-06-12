@@ -45,7 +45,7 @@ class AdminController
                 char_stats.TotalTime as online_time_total,
                 NULL as button
             FROM cohauth.dbo.user_account
-            LEFT JOIN (SELECT Ents.AuthId, SUM(ISNULL(Ents.InfluencePoints, 0)) as inf, SUM(ISNULL(Ents.TotalTime, 0)) as TotalTime, SUM(ISNULL(Ents.Active, 0)) as Active, SUM(ISNULL(Ents.TimePlayed, 0)) as TimePlayed FROM cohdb.dbo.Ents GROUP BY Ents.AuthId) char_stats
+            LEFT JOIN (SELECT Ents.AuthId, SUM(CONVERT(BIGINT, ISNULL(Ents.InfluencePoints, 0))) as inf, SUM(CONVERT(BIGINT, ISNULL(Ents.TotalTime, 0))) as TotalTime, SUM(ISNULL(Ents.Active, 0)) as Active, SUM(CONVERT(BIGINT, ISNULL(Ents.TimePlayed, 0))) as TimePlayed FROM cohdb.dbo.Ents GROUP BY Ents.AuthId) char_stats
             ON user_account.uid = char_stats.AuthId
             LEFT JOIN (SELECT Ents.AuthId, count(*) as num FROM cohdb.dbo.Ents GROUP BY Ents.AuthId) char_count
             ON user_account.uid = char_count.AuthId");
