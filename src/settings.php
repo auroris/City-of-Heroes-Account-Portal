@@ -11,7 +11,11 @@ $dotenv->required(['db_server', 'db_database', 'db_username', 'db_password', 'db
 $GLOBALS['ROOT'] = __DIR__.'/..';
 
 // The Federation's configuration
-include $GLOBALS['ROOT'].'/config/federation.php';
+if (file_exists($GLOBALS['ROOT'].'/config/federation.php')) {
+    include $GLOBALS['ROOT'].'/config/federation.php';
+} else { // No configuration
+    $GLOBALS['federation'] = [];
+}
 
 // Load map lists
 \App\Model\Maps::Generate();

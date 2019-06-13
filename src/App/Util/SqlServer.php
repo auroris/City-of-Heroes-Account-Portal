@@ -48,8 +48,8 @@ class SqlServer
     // Alter SQL queries if the database name is different than expected
     private function AlterSQL($sql)
     {
-        $sql = str_replace('cohdb.dbo', getenv('cohdb'), $sql);
-        $sql = str_replace('cohauth.dbo', getenv('cohauth'), $sql);
+        $sql = str_ireplace('cohdb.dbo', getenv('cohdb'), $sql);
+        $sql = str_ireplace('cohauth.dbo', getenv('cohauth'), $sql);
 
         return $sql;
     }
