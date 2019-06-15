@@ -113,9 +113,32 @@ class SqlServer
     // Runs a statement with no return
     public function Query($sql, array $vars = [])
     {
-        $query = sqlsrv_query($this->conn, $this->AlterSQL($sql), $vars);
+        $query = sqlsrv_query($this->conn, $this->AlterSQL($sql), $vars, array('QueryTimeout' => 5));
         if (false === $query) {
             throw new Exception(print_r(sqlsrv_errors(), true));
+        }
+    }
+
+    // Runs a query, returns the first column from the first row
+    public function GetValue($sql, array $vars = [])
+    {
+        $query = sqlsrv_query($this->conn, $this->AlterSQL($sql), $vars, array('QueryTimeout' => 5));
+
+        if (false === $query) {
+            throw new Exception(print_r(sqlsrv_errors(), true));
+        }
+
+        $result = sqlsrv_fetch($query);
+
+        if (true === $result) {
+            // A result was returned
+            return sqlsrv_get_field($query, 0);
+        } elseif (false === $result) {
+            // An error occured
+            throw new Exception(print_r(sqlsrv_errors(), true));
+        } elseif (null === $result) {
+            // No rows returned
+            return false;
         }
     }
 

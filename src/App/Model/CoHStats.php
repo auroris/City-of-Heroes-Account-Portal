@@ -4,23 +4,21 @@ namespace App\Model;
 
 use Exception;
 use App\Util\Exec;
+use App\Util\SqlServer;
 
 class CoHStats
 {
-    protected $conn;
+    protected $sql;
 
     public function __construct()
     {
-        $this->conn = \App\Util\SqlServer::getInstance()->getConnection();
+        $this->sql = SqlServer::getInstance();
     }
 
     public function CountAccounts()
     {
         try {
-            $qTotalAccounts = sqlsrv_query($this->conn, 'SELECT count(*) FROM cohauth.dbo.user_account');
-            sqlsrv_fetch($qTotalAccounts);
-
-            return sqlsrv_get_field($qTotalAccounts, 0);
+            return $this->sql->GetValue('SELECT count(*) FROM cohauth.dbo.user_account');
         } catch (Exception $e) {
             return -1;
         }
@@ -29,10 +27,7 @@ class CoHStats
     public function CountCharacters()
     {
         try {
-            $qTotalChars = sqlsrv_query($this->conn, 'SELECT count(*) FROM cohdb.dbo.ents');
-            sqlsrv_fetch($qTotalChars);
-
-            return sqlsrv_get_field($qTotalChars, 0);
+            return $this->sql->GetValue('SELECT count(*) FROM cohdb.dbo.ents');
         } catch (Exception $e) {
             return -1;
         }
@@ -41,17 +36,17 @@ class CoHStats
     public function GetOnline()
     {
         try {
-            $qOnline = sqlsrv_query($this->conn, 'SELECT Ents.Name, Ents.StaticMapId, Ents.AccessLevel, Ents2.LfgFlags FROM cohdb.dbo.Ents INNER JOIN cohdb.dbo.Ents2 ON Ents.ContainerId = Ents2.ContainerId WHERE Ents.Active > 0 ORDER BY Name ASC');
+            $qOnline = $this->sql->FetchAssoc('SELECT Ents.Name, Ents.StaticMapId, Ents.AccessLevel, Ents2.LfgFlags FROM cohdb.dbo.Ents INNER JOIN cohdb.dbo.Ents2 ON Ents.ContainerId = Ents2.ContainerId WHERE Ents.Active > 0 ORDER BY Name ASC');
 
             $arr = array();
             $onlineCount = 0;
 
             // No rows or error, return 0
-            if (false === sqlsrv_has_rows($qOnline)) {
+            if (0 == count($qOnline)) {
                 return ['Count' => 0, 'List' => []];
             }
 
-            while ($row = sqlsrv_fetch_array($qOnline, SQLSRV_FETCH_ASSOC)) {
+            foreach ($qOnline as $row) {
                 // Skip CSR's if policy requires
                 if ($row['AccessLevel'] >= getenv('portal_hide_csr')) {
                     continue;
