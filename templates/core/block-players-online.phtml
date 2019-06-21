@@ -1,0 +1,28 @@
+<div class="littleblock">
+    <div class="blocktitle">
+        {% if portal_lfg_only == true %}
+            {{ online.List|length }} Players LFG
+        {% else %}
+            {{online.Count}} Players Online
+        {% endif %}
+    </div>
+    <div class="blockbody onlinelist">
+        {% if portal_lfg_only == true %}
+            <span>{{online.Count}} Players Online</span><br />
+        {% endif %}
+
+        <ul class='onlinelist'>
+        {% for map in online.MapList %}
+            <li><div>{{ map }}</div>
+            <ul>
+
+            {% for char in online.List %}
+                {% if char.MapName == map %}
+                    <li>{{ char.Name }}</li>
+                {% endif %}
+            {% endfor %}
+            </ul></li>
+        {% endfor %}
+        </ul>
+    </div>
+</div>
