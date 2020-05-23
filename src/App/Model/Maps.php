@@ -9,17 +9,17 @@ class Maps
     public static function generate()
     {
         Maps::$ID[1] = 'Atlas Park';
-		Maps::$ID[101] = 'Atlas Park  2';
-		Maps::$ID[102] = 'Atlas Park  3';
-		Maps::$ID[103] = 'Atlas Park  4';
+	Maps::$ID[101] = 'Atlas Park  2';
+	Maps::$ID[102] = 'Atlas Park  3';
+	Maps::$ID[103] = 'Atlas Park  4';
         Maps::$ID[3] = 'Cimerora';
-		Maps::$ID[301] = 'Cimerora  2';
-		Maps::$ID[302] = 'Cimerora  3';
-		Maps::$ID[303] = 'Cimerora  4';
+	Maps::$ID[301] = 'Cimerora  2';
+	Maps::$ID[302] = 'Cimerora  3';
+	Maps::$ID[303] = 'Cimerora  4';
         Maps::$ID[4] = 'Midnighter Club';
-		Maps::$ID[401] = 'Midnighter Club  2';
-		Maps::$ID[402] = 'Midnighter Club  3';
-		Maps::$ID[403] = 'Midnighter Club  4';
+	Maps::$ID[401] = 'Midnighter Club  2';
+	Maps::$ID[402] = 'Midnighter Club  3';
+	Maps::$ID[403] = 'Midnighter Club  4';
         Maps::$ID[5] = 'Kings Row';
         Maps::$ID[501] = 'Kings Row  2';
         Maps::$ID[502] = 'Kings Row  3';
@@ -53,7 +53,7 @@ class Maps
         Maps::$ID[1202] = 'Perez Park 3';
         Maps::$ID[1203] = 'Perez Park 4';
         Maps::$ID[13] = 'Boomtown';
-		Maps::$ID[1301] = 'Boomtown 2';
+	Maps::$ID[1301] = 'Boomtown 2';
         Maps::$ID[1302] = 'Boomtown 3';
         Maps::$ID[1303] = 'Boomtown 4';
         Maps::$ID[14] = 'Echo: Dark Astoria';
